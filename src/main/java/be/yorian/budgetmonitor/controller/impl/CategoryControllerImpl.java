@@ -33,7 +33,7 @@ public class CategoryControllerImpl implements CategoryController {
 
     
     @Override
-    @GetMapping("/categories")
+    @GetMapping("/categories/")
     public List<Category> getCategories() {
         return categoryService.getCategories();
     }
@@ -46,7 +46,7 @@ public class CategoryControllerImpl implements CategoryController {
 
     @Override
     @GetMapping(produces = "application/json", path="/categories/label")
-    public ResponseEntity<CustomResponse> getCommentBySearchterm(@RequestParam Optional<String> label,
+    public ResponseEntity<CustomResponse> getCategoryBySearchterm(@RequestParam Optional<String> label,
                                                                  @RequestParam Optional<Integer> page,
                                                                  @RequestParam Optional<Integer> size) {
         Page<Category> categories = categoryService.getCategoriesByLabel(label.orElse(""),

@@ -35,7 +35,7 @@ public class CommentControllerImpl implements CommentController {
     }
 
     @Override
-    @GetMapping("/comments")
+    @GetMapping("/comments/")
     public List<Comment> getComments() {
         return commentService.getComments();
     }
@@ -70,7 +70,7 @@ public class CommentControllerImpl implements CommentController {
     }
 
     @Override
-    @PostMapping("/comments")
+    @PostMapping("/comments/")
     public void createComment(@RequestBody Comment comment) {
         commentService.saveComment(comment);
     }

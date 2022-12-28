@@ -1,6 +1,8 @@
 package be.yorian.budgetmonitor.repository;
 
 import be.yorian.budgetmonitor.entity.Transaction;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -26,4 +28,6 @@ public interface TransactionRepository extends JpaRepository<Transaction,Long> {
             "where SUBSTRING(tx.date, 1, 7) = ?1 " +
             "and (tx.category.id = ?2 or tx.category.id = ?3)", nativeQuery = true)
     List<Transaction> findByDateAndCategory(String date, long loon, long kindergeld);
+
+    Page<Transaction> findByCommentContaining(String comment, Pageable pageable);
 }

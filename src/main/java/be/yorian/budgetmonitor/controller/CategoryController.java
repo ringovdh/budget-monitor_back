@@ -11,7 +11,7 @@ public interface CategoryController {
 
     List<Category> getCategories();
     Optional<Category> getCategoryById(long id);
-    ResponseEntity<CustomResponse> getCommentBySearchterm(Optional<String> label,
+    ResponseEntity<CustomResponse> getCategoryBySearchterm(Optional<String> label,
                                                           Optional<Integer> page,
                                                           Optional<Integer> size);
     ResponseEntity<Void> saveCategory(Category category);
