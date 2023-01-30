@@ -13,9 +13,8 @@ public interface TransactionController {
     ResponseEntity<CustomResponse> getTransactionsByComment(Optional<String> comment,
                                                             Optional<Integer> page,
                                                             Optional<Integer> size);
-    List<Transaction> getTransactionsByYear(String year);
     List<Transaction> getTransactionsByMonth(String month, String year);
-    void saveTransaction(Transaction transaction);
+    Transaction saveTransaction(Transaction transaction);
     void updateTransaction(Long id, Transaction transaction);
     void deleteTransaction(Long id);
 	

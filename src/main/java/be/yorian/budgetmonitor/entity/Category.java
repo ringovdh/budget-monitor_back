@@ -12,6 +12,8 @@ public class Category {
     public String label;
     public String icon;
     public boolean fixedcost;
+    public boolean saving;
+    public boolean revenue;
     public boolean indetails;
     public boolean inmonitor;
     public long limitamount;
@@ -52,6 +54,10 @@ public class Category {
         this.fixedcost = fixedcost;
     }
 
+    public boolean isSaving() { return saving; }
+
+    public void setSaving(boolean saving) { this.saving = saving; }
+
     public boolean isIndetails() {
         return indetails;
     }
@@ -74,5 +80,13 @@ public class Category {
 
     public void setLimitamount(long limitamount) {
         this.limitamount = limitamount;
+    }
+
+    public boolean isRevenue() {
+        return revenue;
+    }
+
+    public void setRevenue(boolean revenue) {
+        this.revenue = revenue;
     }
 }

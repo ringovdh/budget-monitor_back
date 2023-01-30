@@ -57,12 +57,6 @@ public class TransactionControllerImpl implements TransactionController {
     }
 
     @Override
-    @GetMapping("/transactions/{year}")
-    public List<Transaction> getTransactionsByYear(@PathVariable String year) {
-        return transactionService.getTransactionsByYear(year);
-    }
-
-    @Override
     @GetMapping("/transactions/{month}/{year}")
     public List<Transaction> getTransactionsByMonth(@PathVariable String month, @PathVariable String year) {
         return transactionService.getTransactionsByMonth(month, year);
@@ -70,8 +64,8 @@ public class TransactionControllerImpl implements TransactionController {
 
 	@Override
     @PostMapping("/transactions")
-    public void saveTransaction(@RequestBody Transaction transaction) {
-        transactionService.saveTransaction(transaction);
+    public Transaction saveTransaction(@RequestBody Transaction transaction) {
+        return transactionService.saveTransaction(transaction);
     }
 
     @Override

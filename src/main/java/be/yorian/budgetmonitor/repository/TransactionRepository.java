@@ -7,17 +7,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction,Long> {
 
-    Transaction findByDateAndNumber(Date date, String number);
-
-    @Query(value = "select tx from Transaction tx " +
-            "where SUBSTRING(tx.date, 1, 4) = ?1", nativeQuery = true)
-    List<Transaction> findByYear(String year);
+    Transaction findByDateAndNumber(LocalDate date, String number);
 
     @Query(value = "select tx from Transaction tx " +
             "where SUBSTRING(tx.date, 6, 2) = ?1 " +
@@ -30,4 +26,7 @@ public interface TransactionRepository extends JpaRepository<Transaction,Long> {
     List<Transaction> findByDateAndCategory(String date, long loon, long kindergeld);
 
     Page<Transaction> findByCommentContaining(String comment, Pageable pageable);
+
+    @Query("select t from Transaction t where month (t.date) = ?1 and year(t.date) = ?2")
+    List<Transaction> findByDateContainingYearAndMont(int month, int year);
 }

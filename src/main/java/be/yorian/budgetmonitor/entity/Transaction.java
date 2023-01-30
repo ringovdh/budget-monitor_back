@@ -2,7 +2,7 @@ package be.yorian.budgetmonitor.entity;
 
 import jakarta.persistence.*;
 
-import java.sql.Date;
+import java.time.LocalDate;
 
 @Entity
 public class Transaction {
@@ -13,7 +13,7 @@ public class Transaction {
     public String number;
     public Double amount;
     public String sign;
-    public Date date;
+    public LocalDate date;
     public String comment;
     @Transient
     public String originalComment;
@@ -23,7 +23,7 @@ public class Transaction {
 
     public Transaction() {}
 
-    public Transaction(String number, Double amount, String sign, Date date, String comment, Category category) {
+    public Transaction(String number, Double amount, String sign, LocalDate date, String comment, Category category) {
         this.number = number;
         this.amount = amount;
         this.sign = sign;
@@ -68,11 +68,11 @@ public class Transaction {
         this.sign = sign;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 

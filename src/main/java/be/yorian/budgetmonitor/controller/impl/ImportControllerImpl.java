@@ -1,7 +1,7 @@
 package be.yorian.budgetmonitor.controller.impl;
 
 import be.yorian.budgetmonitor.controller.ImportController;
-import be.yorian.budgetmonitor.entity.ImportResponse;
+import be.yorian.budgetmonitor.entity.ImportTransactionsResponse;
 import be.yorian.budgetmonitor.response.CustomResponse;
 import be.yorian.budgetmonitor.service.impl.ImportServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public class ImportControllerImpl implements ImportController {
         CustomResponse response = new CustomResponse();
         response.setStatus(HttpStatus.OK);
         response.setStatusCode(HttpStatus.OK.value());
-        Map<String, ImportResponse> dataMap = new HashMap<>();
+        Map<String, ImportTransactionsResponse> dataMap = new HashMap<>();
         dataMap.put("import", importService.handleImport(file));
         response.setData(dataMap);
 

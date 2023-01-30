@@ -11,9 +11,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
-import java.sql.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -204,15 +203,8 @@ public class PDFReader {
         return Double.parseDouble(amount_string);
     }
 
-    private Date convertDate(String date) {
-        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
-        java.util.Date parsed = null;
-        try {
-            parsed = format.parse(date);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        return new Date(parsed.getTime());
+    private LocalDate convertDate(String date) {
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        return LocalDate.parse(date, format);
     }
 }

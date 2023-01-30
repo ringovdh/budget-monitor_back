@@ -57,6 +57,7 @@ public class CategoryServiceImpl implements CategoryService {
             existingCategory.setIndetails(category.isIndetails());
             existingCategory.setInmonitor(category.isInmonitor());
             existingCategory.setLimitamount(category.getLimitamount());
+            existingCategory.setRevenue(category.isRevenue());
             return categoryRepository.save(existingCategory);
         }
     }
@@ -64,7 +65,6 @@ public class CategoryServiceImpl implements CategoryService {
 	@Override
 	public void deleteCategory(long category_id) {
 		categoryRepository.deleteById(category_id);
-		
 	}
 
 	private Sort sortByLabel() {
