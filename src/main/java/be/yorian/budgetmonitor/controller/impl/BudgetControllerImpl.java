@@ -2,6 +2,7 @@ package be.yorian.budgetmonitor.controller.impl;
 
 import be.yorian.budgetmonitor.controller.BudgetController;
 import be.yorian.budgetmonitor.dto.BudgetOverviewPerCategory;
+import be.yorian.budgetmonitor.dto.BudgetOverviewPerMonth;
 import be.yorian.budgetmonitor.service.BudgetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,8 +27,15 @@ public class BudgetControllerImpl implements BudgetController {
 
     @Override
     @GetMapping(produces = "application/json", path="/budgets/period")
-    public ResponseEntity<List<BudgetOverviewPerCategory>> getBudgetOverviewPerCategory(@RequestParam Optional<Integer>month,
-                                                                       @RequestParam Optional<Integer>year) {
-        return ResponseEntity.ok().body(budgetService.getBudgetOverviewPerCategory(month.orElse(1), year.orElse(2022)));
+    public ResponseEntity<List<BudgetOverviewPerMonth>> getBudgetOverviewPerMonth(@RequestParam Optional<Integer>month,
+                                                                                  @RequestParam Optional<Integer>year) {
+        return ResponseEntity.ok().body(budgetService.getBudgetOverviewPerMonth(month.orElse(1), year.orElse(2022)));
+    }
+
+    @Override
+    @GetMapping(produces = "application/json", path="/budgets/category")
+    public ResponseEntity<List<BudgetOverviewPerCategory>> getBudgetOverviewPerCategory(@RequestParam Optional<Long>categoryId,
+                                                                                        @RequestParam Optional<Integer>year) {
+        return ResponseEntity.ok().body(budgetService.getBudgetOverviewPerCategory(categoryId.orElse(0L), year.orElse(2022)));
     }
 }

@@ -1,8 +1,10 @@
 package be.yorian.budgetmonitor.controller.impl;
 
 import be.yorian.budgetmonitor.controller.TransactionController;
+import be.yorian.budgetmonitor.dto.BudgetOverviewPerCategory;
 import be.yorian.budgetmonitor.entity.Transaction;
 import be.yorian.budgetmonitor.response.CustomResponse;
+import be.yorian.budgetmonitor.service.BudgetService;
 import be.yorian.budgetmonitor.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,10 +30,13 @@ import java.util.Optional;
 public class TransactionControllerImpl implements TransactionController {
 
     private final TransactionService transactionService;
+    private final BudgetService budgetService;
 
     @Autowired
-    public TransactionControllerImpl(TransactionService transactionService) {
+    public TransactionControllerImpl(TransactionService transactionService,
+                                     BudgetService budgetService) {
         this.transactionService = transactionService;
+        this.budgetService = budgetService;
     }
 
     @Override
@@ -54,6 +59,22 @@ public class TransactionControllerImpl implements TransactionController {
         dataMap.put("page", transactions);
         response.setData(dataMap);
         return ResponseEntity.ok().body(response);
+    }
+
+    @Override
+    @GetMapping(produces = "application/json", path="transactions/category")
+    public ResponseEntity<List<BudgetOverviewPerCategory>> getTransactionsByCategory(@RequestParam Optional<Long> categoryId,
+                                                                    @RequestParam Optional<Integer> year) {
+        List<BudgetOverviewPerCategory> budgetOverviewPerCategory = budgetService.getBudgetOverviewPerCategory(categoryId.orElse(0L),
+                year.orElse(0));
+        CustomResponse response = new CustomResponse();
+        response.setStatus(HttpStatus.OK);
+        response.setStatusCode(HttpStatus.OK.value());
+        Map<String, List<BudgetOverviewPerCategory>> dataMap = new HashMap<>();
+        dataMap.put("page", budgetOverviewPerCategory);
+        response.setData(dataMap);
+
+        return ResponseEntity.ok().body(budgetOverviewPerCategory);
     }
 
     @Override

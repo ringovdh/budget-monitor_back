@@ -1,30 +1,22 @@
 package be.yorian.budgetmonitor.dto;
 
+import be.yorian.budgetmonitor.entity.Category;
 import be.yorian.budgetmonitor.entity.Transaction;
 
 import java.util.List;
 
-public class BudgetOverviewPerCategory {
+public class BudgetOverviewPerMonth {
 
-    private int year;
-    private String categoryLabel;
+    private Category category;
     private List<Transaction> transactions;
     private double total;
 
-    public int getYear() {
-        return year;
+    public Category getCategory() {
+        return category;
     }
 
-    public void setYear(int year) {
-        this.year = year;
-    }
-
-    public String getCategoryLabel() {
-        return categoryLabel;
-    }
-
-    public void setCategoryLabel(String categoryLabel) {
-        this.categoryLabel = categoryLabel;
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
     public List<Transaction> getTransactions() {

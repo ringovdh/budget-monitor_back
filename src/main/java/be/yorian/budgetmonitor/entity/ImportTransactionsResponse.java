@@ -1,13 +1,13 @@
 package be.yorian.budgetmonitor.entity;
 
-import be.yorian.budgetmonitor.dto.BudgetOverviewPerCategory;
+import be.yorian.budgetmonitor.dto.BudgetOverviewPerMonth;
 
 import java.util.List;
 
 public class ImportTransactionsResponse {
 
     private List<Transaction> newTransactions;
-    private List<BudgetOverviewPerCategory> existingTransactions;
+    private List<BudgetOverviewPerMonth> existingTransactions;
 
 
     public List<Transaction> getNewTransactions() {
@@ -19,11 +19,11 @@ public class ImportTransactionsResponse {
     }
 
 
-    public List<BudgetOverviewPerCategory> getExistingTransactions() {
+    public List<BudgetOverviewPerMonth> getExistingTransactions() {
         return existingTransactions;
     }
 
-    public void setExistingTransactions(List<BudgetOverviewPerCategory> existingTransactions) {
+    public void setExistingTransactions(List<BudgetOverviewPerMonth> existingTransactions) {
         this.existingTransactions = existingTransactions;
     }
 
