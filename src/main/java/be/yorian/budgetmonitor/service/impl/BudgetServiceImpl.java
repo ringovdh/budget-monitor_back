@@ -2,6 +2,7 @@ package be.yorian.budgetmonitor.service.impl;
 
 import be.yorian.budgetmonitor.dto.BudgetOverviewPerCategory;
 import be.yorian.budgetmonitor.dto.BudgetOverviewPerMonth;
+import be.yorian.budgetmonitor.dto.BudgetOverviewPerYear;
 import be.yorian.budgetmonitor.entity.Transaction;
 import be.yorian.budgetmonitor.repository.TransactionRepository;
 import be.yorian.budgetmonitor.service.BudgetService;
@@ -25,25 +26,13 @@ public class BudgetServiceImpl implements BudgetService {
 
     @Override
     public List<BudgetOverviewPerMonth> getBudgetOverviewPerMonth(int month, int year) {
-        List <BudgetOverviewPerMonth> dtos = new ArrayList<>();
-
-        transactionRepository.findByDateContainingYearAndMont(month, year).stream()
-                .collect(groupingBy(Transaction::getCategory))
-                .forEach((category, transactions) -> {
-                    BudgetOverviewPerMonth dto = new BudgetOverviewPerMonth();
-                    dto.setCategory(category);
-                    dto.setTransactions(transactions);
-                    dto.calculateAndSetTotal(transactions);
-                    dtos.add(dto);
-                });
-
-        return dtos;
+        return groupMonthBudgetByCategory(transactionRepository.findByDateContainingYearAndMonth(month, year));
     }
 
     @Override
     public List<BudgetOverviewPerCategory> getBudgetOverviewPerCategory(Long categoryId, int year) {
         List <BudgetOverviewPerCategory> dtos = new ArrayList<>();
-        List <Transaction> transactions = new ArrayList<>();
+        List <Transaction> transactions;
         if (year == 0) {
             transactions = transactionRepository.findByCategoryId(categoryId);
         } else {
@@ -61,4 +50,32 @@ public class BudgetServiceImpl implements BudgetService {
         return dtos;
     }
 
+    @Override
+    public List<BudgetOverviewPerYear> getBudgetOverviewPerYear(int year) {
+        List <BudgetOverviewPerYear> dtos = new ArrayList<>();
+        transactionRepository.findByDateContainingYear(year).stream()
+                .collect(groupingBy(t -> t.getDate().getMonthValue()))
+                .forEach((month, transactions) -> {
+                    BudgetOverviewPerYear dto = new BudgetOverviewPerYear();
+                    dto.setMonth(month);
+                    dto.setTransactionsPerMonth(groupMonthBudgetByCategory(transactions));
+                    dtos.add(dto);
+                });
+
+        return dtos;
+    }
+
+    private List<BudgetOverviewPerMonth> groupMonthBudgetByCategory(List<Transaction> transactions) {
+        List<BudgetOverviewPerMonth> dtos = new ArrayList<>();
+        transactions.stream()
+                .collect(groupingBy(Transaction::getCategory))
+                .forEach((category, txs) -> {
+                    BudgetOverviewPerMonth dto = new BudgetOverviewPerMonth();
+                    dto.setCategory(category);
+                    dto.setTransactions(txs);
+                    dto.calculateAndSetTotal(txs);
+                    dtos.add(dto);
+                });
+        return dtos;
+    }
 }

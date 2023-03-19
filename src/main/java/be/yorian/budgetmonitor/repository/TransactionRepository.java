@@ -28,10 +28,13 @@ public interface TransactionRepository extends JpaRepository<Transaction,Long> {
     Page<Transaction> findByCommentContaining(String comment, Pageable pageable);
 
     @Query("select t from Transaction t where month (t.date) = ?1 and year(t.date) = ?2")
-    List<Transaction> findByDateContainingYearAndMont(int month, int year);
+    List<Transaction> findByDateContainingYearAndMonth(int month, int year);
 
     @Query("select t from Transaction t where t.category.id = ?1 and year(t.date) = ?2")
     List<Transaction> findByCategoryIdAndDateContainingYear(Long categoryId, int year);
 
     List<Transaction> findByCategoryId(Long categoryId);
+
+    @Query("select t from Transaction t where year(t.date) = ?1")
+    List<Transaction> findByDateContainingYear(int year);
 }

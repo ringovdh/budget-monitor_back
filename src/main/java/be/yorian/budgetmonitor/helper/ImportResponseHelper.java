@@ -21,7 +21,6 @@ public class ImportResponseHelper {
     private final List<Transaction> transactions;
     private final ImportTransactionsResponse response;
 
-
     public ImportResponseHelper(TransactionRepository transactionRepository,
                                 CommentRepository commentRepository,
                                 List<Transaction> transactions)
