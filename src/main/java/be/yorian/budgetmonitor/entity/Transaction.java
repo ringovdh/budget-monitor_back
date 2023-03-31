@@ -20,6 +20,9 @@ public class Transaction {
     @OneToOne
     @JoinColumn(name = "category", referencedColumnName = "id")
     public Category category;
+    @ManyToOne()
+    @JoinColumn(name= "project_id")
+    public Project project;
 
     public Transaction() {}
 
@@ -94,6 +97,14 @@ public class Transaction {
 
     public void setOriginalComment(String originalComment) {
         this.originalComment = originalComment;
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
     }
 
     @Override

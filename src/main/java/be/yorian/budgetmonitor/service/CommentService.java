@@ -8,10 +8,10 @@ import java.util.Optional;
 
 public interface CommentService {
 	
-	public List<Comment> getComments();
-	public Page<Comment> getCommentsBySearchterm(String searchterm, int page, int size);
-	public Optional<Comment> getCommentById(Long comment_id);
-	public void saveComment(Comment comment);
-	public void deleteComment(Long comment_id);
-	public void updateComment(Long commentId, Comment comment);
+	List<Comment> getComments();
+	Page<Comment> getCommentsBySearchterm(String searchterm, int page, int size);
+	Optional<Comment> getCommentById(Long comment_id);
+	void saveComment(Comment comment);
+	void deleteComment(Long comment_id);
+	void updateComment(Long commentId, Comment comment);
 }
