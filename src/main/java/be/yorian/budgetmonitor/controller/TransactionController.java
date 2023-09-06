@@ -18,7 +18,7 @@ public interface TransactionController {
                                                                               Optional<Integer> year);
     List<Transaction> getTransactionsByMonth(String month, String year);
     Transaction saveTransaction(Transaction transaction);
-    void updateTransaction(Long id, Transaction transaction);
+    Transaction updateTransaction(Long id, Transaction transaction);
     void deleteTransaction(Long id);
 	
 }

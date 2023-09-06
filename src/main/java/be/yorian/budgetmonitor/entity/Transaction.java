@@ -1,6 +1,12 @@
 package be.yorian.budgetmonitor.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Transient;
 
 import java.time.LocalDate;
 
@@ -10,29 +16,38 @@ public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long tx_id;
+
     public String number;
+
     public Double amount;
+
     public String sign;
+
     public LocalDate date;
+
     public String comment;
+
     @Transient
     public String originalComment;
+
     @OneToOne
     @JoinColumn(name = "category", referencedColumnName = "id")
     public Category category;
-    @ManyToOne()
-    @JoinColumn(name= "project_id")
+
+    @OneToOne
+    @JoinColumn(name= "project_id", referencedColumnName = "id")
     public Project project;
 
     public Transaction() {}
 
-    public Transaction(String number, Double amount, String sign, LocalDate date, String comment, Category category) {
+    public Transaction(String number, Double amount, String sign, LocalDate date, String comment, Category category, Project project) {
         this.number = number;
         this.amount = amount;
         this.sign = sign;
         this.date = date;
         this.comment = comment;
         this.category = category;
+        this.project = project;
     }
 
     public Transaction(String number) {
@@ -95,16 +110,16 @@ public class Transaction {
         this.category = category;
     }
 
-    public void setOriginalComment(String originalComment) {
-        this.originalComment = originalComment;
-    }
-
     public Project getProject() {
         return project;
     }
 
     public void setProject(Project project) {
         this.project = project;
+    }
+
+    public void setOriginalComment(String originalComment) {
+        this.originalComment = originalComment;
     }
 
     @Override
@@ -116,7 +131,8 @@ public class Transaction {
                 ", sign='" + sign + '\'' +
                 ", date=" + date +
                 ", comment='" + comment + '\'' +
-                ", category=" + category +
+                ", category=" + category + '\'' +
+                ", project=" + project +
                 '}';
     }
 

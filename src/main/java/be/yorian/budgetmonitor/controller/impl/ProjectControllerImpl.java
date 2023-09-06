@@ -1,6 +1,7 @@
 package be.yorian.budgetmonitor.controller.impl;
 
 import be.yorian.budgetmonitor.controller.ProjectController;
+import be.yorian.budgetmonitor.dto.ProjectOverviewDTO;
 import be.yorian.budgetmonitor.entity.Project;
 import be.yorian.budgetmonitor.response.CustomResponse;
 import be.yorian.budgetmonitor.service.ProjectService;
@@ -8,17 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -50,6 +44,12 @@ public class ProjectControllerImpl implements ProjectController {
     }
 
     @Override
+    @GetMapping("/projects/")
+    public List<ProjectOverviewDTO> getProjects() {
+        return projectService.getProjects();
+    }
+    
+    @Override
     @PostMapping("/projects/")
     public void createProject(@RequestBody Project project) {
         projectService.saveProject(project);
@@ -65,7 +65,6 @@ public class ProjectControllerImpl implements ProjectController {
     @Override
     @DeleteMapping("/projects/{project_id}")
     public void deleteProject(@PathVariable("project_id")Long projectId) {
-
         projectService.deleteProject(projectId);
     }
 

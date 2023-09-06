@@ -18,11 +18,9 @@ public class Category {
     public boolean inmonitor;
     public long limitamount;
 
+
     public Category() {}
 
-    public Category(String label) {
-        this.label = label;
-    }
 
     public long getId() {
         return id;

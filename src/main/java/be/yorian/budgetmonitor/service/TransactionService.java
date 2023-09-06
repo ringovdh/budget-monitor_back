@@ -11,6 +11,6 @@ public interface TransactionService {
     Transaction saveTransaction(Transaction transaction);
     List<Transaction> getTransactionsByMonth(String month, String year);
     Page<Transaction> getTransactionsByComment(String comment, Integer page, Integer size);
-    void updateTransaction(Long id, Transaction transaction);
+    Transaction updateTransaction(Long id, Transaction transaction);
     void deleteTransaction(Long id);
 }

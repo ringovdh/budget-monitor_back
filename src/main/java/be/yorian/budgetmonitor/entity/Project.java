@@ -4,9 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 
-import java.util.List;
+import java.time.LocalDate;
 
 @Entity
 public class Project {
@@ -15,13 +14,18 @@ public class Project {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    public String projectname;
+    private String projectname;
 
-    @OneToMany(mappedBy = "project")
-    public List<Transaction> transactions;
+    private String description;
 
-    public Project() {
-    }
+    private LocalDate startdate;
+
+    private LocalDate enddate;
+
+    private String icon;
+
+
+    public Project() {}
 
     public long getId() {
         return id;
@@ -39,11 +43,35 @@ public class Project {
         this.projectname = projectName;
     }
 
-    public List<Transaction> getTransactions() {
-        return transactions;
+    public String getDescription() {
+        return description;
     }
 
-    public void setTransactions(List<Transaction> transactions) {
-        this.transactions = transactions;
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public LocalDate getStartdate() {
+        return startdate;
+    }
+
+    public void setStartdate(LocalDate startDate) {
+        this.startdate = startDate;
+    }
+
+    public LocalDate getEnddate() {
+        return enddate;
+    }
+
+    public void setEnddate(LocalDate endDate) {
+        this.enddate = endDate;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
     }
 }

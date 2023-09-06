@@ -37,4 +37,6 @@ public interface TransactionRepository extends JpaRepository<Transaction,Long> {
 
     @Query("select t from Transaction t where year(t.date) = ?1")
     List<Transaction> findByDateContainingYear(int year);
+
+    List<Transaction> findByProjectProjectname(String projectname);
 }

@@ -91,8 +91,8 @@ public class TransactionControllerImpl implements TransactionController {
 
     @Override
     @PutMapping("/transactions/{id}")
-    public void updateTransaction(@PathVariable("id")Long id, @RequestBody Transaction transaction) {
-        transactionService.updateTransaction(id, transaction);
+    public Transaction updateTransaction(@PathVariable("id")Long id, @RequestBody Transaction transaction) {
+        return transactionService.updateTransaction(id, transaction);
     }
 
     @Override

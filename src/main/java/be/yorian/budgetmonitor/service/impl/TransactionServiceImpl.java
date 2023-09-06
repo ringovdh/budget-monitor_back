@@ -10,7 +10,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.springframework.data.domain.PageRequest.of;
 
@@ -36,20 +35,18 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public void updateTransaction(Long id, Transaction updatedTransaction) {
-        Optional<Transaction> optionalTransaction = transactionRepository.findById(id);
-        if (optionalTransaction.isEmpty()) {
-            throw new EntityNotFoundException("transaction_not_found");
-        } else {
-            Transaction transaction = optionalTransaction.get();
-            transaction.setNumber(updatedTransaction.getNumber());
-            transaction.setDate(updatedTransaction.getDate());
-            transaction.setComment(updatedTransaction.getComment());
-            transaction.setSign(updatedTransaction.getSign());
-            transaction.setAmount(updatedTransaction.getAmount());
-            transaction.setCategory(updatedTransaction.getCategory());
-            transactionRepository.save(transaction);
-        }
+    public Transaction updateTransaction(Long id, Transaction updatedTransaction) {
+        Transaction transaction = transactionRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("transaction_not_found"));
+
+        transaction.setNumber(updatedTransaction.getNumber());
+        transaction.setDate(updatedTransaction.getDate());
+        transaction.setComment(updatedTransaction.getComment());
+        transaction.setSign(updatedTransaction.getSign());
+        transaction.setAmount(updatedTransaction.getAmount());
+        transaction.setCategory(updatedTransaction.getCategory());
+        transaction.setProject(updatedTransaction.getProject());
+
+        return transactionRepository.save(transaction);
     }
 
     @Override

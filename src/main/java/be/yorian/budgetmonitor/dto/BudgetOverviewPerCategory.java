@@ -1,5 +1,6 @@
 package be.yorian.budgetmonitor.dto;
 
+import be.yorian.budgetmonitor.entity.Category;
 import be.yorian.budgetmonitor.entity.Transaction;
 
 import java.util.List;
@@ -7,7 +8,7 @@ import java.util.List;
 public class BudgetOverviewPerCategory {
 
     private int year;
-    private String categoryLabel;
+    private Category category;
     private List<Transaction> transactions;
     private double total;
 
@@ -19,12 +20,12 @@ public class BudgetOverviewPerCategory {
         this.year = year;
     }
 
-    public String getCategoryLabel() {
-        return categoryLabel;
+    public Category getCategory() {
+        return category;
     }
 
-    public void setCategoryLabel(String categoryLabel) {
-        this.categoryLabel = categoryLabel;
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
     public List<Transaction> getTransactions() {
