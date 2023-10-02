@@ -1,6 +1,6 @@
 package be.yorian.budgetmonitor.helper;
 
-import be.yorian.budgetmonitor.dto.BudgetOverviewPerMonth;
+import be.yorian.budgetmonitor.dto.TransactionsPerCategory;
 import be.yorian.budgetmonitor.entity.Comment;
 import be.yorian.budgetmonitor.entity.ImportTransactionsResponse;
 import be.yorian.budgetmonitor.entity.Transaction;
@@ -62,12 +62,12 @@ public class ImportResponseHelper {
         this.response.setNewTransactions(newTransactions);
     }
 
-    private List<BudgetOverviewPerMonth> createBudgetOverview(List<Transaction> existingTransactions) {
-        List<BudgetOverviewPerMonth> budgetOverview = new ArrayList<>();
+    private List<TransactionsPerCategory> createBudgetOverview(List<Transaction> existingTransactions) {
+        List<TransactionsPerCategory> budgetOverview = new ArrayList<>();
         existingTransactions.stream()
                 .collect(groupingBy(Transaction::getCategory))
                 .forEach((category, transactions) -> {
-                    BudgetOverviewPerMonth dto = new BudgetOverviewPerMonth();
+                    TransactionsPerCategory dto = new TransactionsPerCategory();
                     dto.setCategory(category);
                     dto.setTransactions(transactions);
                     dto.calculateAndSetTotal(transactions);

@@ -5,7 +5,7 @@ import java.util.List;
 public class BudgetOverviewPerYear {
 
     private int month;
-    private List<BudgetOverviewPerMonth> transactionsPerMonth;
+    private List<TransactionsPerCategory> transactionsPerMonth;
 
     public int getMonth() {
         return month;
@@ -15,11 +15,11 @@ public class BudgetOverviewPerYear {
         this.month = month;
     }
 
-    public List<BudgetOverviewPerMonth> getTransactionsPerMonth() {
+    public List<TransactionsPerCategory> getTransactionsPerMonth() {
         return transactionsPerMonth;
     }
 
-    public void setTransactionsPerMonth(List<BudgetOverviewPerMonth> transactionsPerMonth) {
+    public void setTransactionsPerMonth(List<TransactionsPerCategory> transactionsPerMonth) {
         this.transactionsPerMonth = transactionsPerMonth;
     }
 

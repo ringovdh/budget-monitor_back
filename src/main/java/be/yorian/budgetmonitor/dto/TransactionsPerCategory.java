@@ -5,7 +5,7 @@ import be.yorian.budgetmonitor.entity.Transaction;
 
 import java.util.List;
 
-public class BudgetOverviewPerMonth {
+public class TransactionsPerCategory {
 
     private Category category;
     private List<Transaction> transactions;
