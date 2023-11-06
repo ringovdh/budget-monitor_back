@@ -2,6 +2,6 @@ package be.yorian.budgetmonitor.dto;
 
 import java.util.List;
 
-public record MonthlyBudgetOverview(
-        List<BudgetPerCategory> budgetsPerCategory,
+public record YearlyBudgetOverview(
+        List<BudgetPerMonth> budgetsPerMonth,
         GraphData graphData) { }

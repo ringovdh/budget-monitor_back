@@ -122,6 +122,14 @@ public class Transaction {
         this.originalComment = originalComment;
     }
 
+    public double getAmountWithSign() {
+        if (sign.equals("+")) {
+            return amount;
+        } else {
+        return -amount;
+        }
+    }
+
     @Override
     public String toString() {
         return "Transaction{" +

@@ -1,10 +1,10 @@
-package be.yorian.budgetmonitor.entity;
+package be.yorian.budgetmonitor.dto;
 
 import java.util.List;
 import java.util.Map;
 
-public record MonthGraphData (
-        List<Integer> days,
+public record GraphData(
+        List<Integer> labels,
         Map<Integer, Double> incomingAmounts,
         Map<Integer, Double> fixedCostAmounts,
         Map<Integer, Double> otherCostAmounts) { }

@@ -1,8 +1,8 @@
 package be.yorian.budgetmonitor.service;
 
 import be.yorian.budgetmonitor.dto.BudgetOverviewPerCategory;
-import be.yorian.budgetmonitor.dto.BudgetOverviewPerYear;
 import be.yorian.budgetmonitor.dto.MonthlyBudgetOverview;
+import be.yorian.budgetmonitor.dto.YearlyBudgetOverview;
 
 import java.util.List;
 
@@ -11,6 +11,6 @@ public interface BudgetService {
 
     List<BudgetOverviewPerCategory> getBudgetOverviewPerCategory(Long categoryId, int year);
 
-    List<BudgetOverviewPerYear> getBudgetOverviewPerYear(int year);
+    YearlyBudgetOverview getBudgetOverviewPerYear(int year);
 
 }

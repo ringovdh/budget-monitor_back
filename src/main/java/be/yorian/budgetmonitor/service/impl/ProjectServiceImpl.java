@@ -1,6 +1,6 @@
 package be.yorian.budgetmonitor.service.impl;
 
-import be.yorian.budgetmonitor.dto.ProjectOverviewDTO;
+import be.yorian.budgetmonitor.dto.ProjectOverview;
 import be.yorian.budgetmonitor.entity.Project;
 import be.yorian.budgetmonitor.entity.Transaction;
 import be.yorian.budgetmonitor.repository.ProjectRepository;
@@ -35,7 +35,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public List<ProjectOverviewDTO> getProjects() {
+    public List<ProjectOverview> getProjects() {
         return projectRepository.findAll().stream().map(
                 p -> {
                     return mapProjectToProjectOverviewDTO(p);
@@ -43,9 +43,9 @@ public class ProjectServiceImpl implements ProjectService {
         ).toList();
     }
 
-    private ProjectOverviewDTO mapProjectToProjectOverviewDTO(Project p) {
+    private ProjectOverview mapProjectToProjectOverviewDTO(Project p) {
         List<Transaction> transactions = transactionRepository.findByProjectProjectname(p.getProjectname());
-        return new ProjectOverviewDTO(
+        return new ProjectOverview(
                 p.getId(),
                 p.getProjectname(),
                 p.getDescription(),

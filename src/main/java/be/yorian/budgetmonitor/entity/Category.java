@@ -87,4 +87,8 @@ public class Category {
     public void setRevenue(boolean revenue) {
         this.revenue = revenue;
     }
+
+    public boolean isOtherCost() {
+        return !isFixedcost() && !isRevenue() && !isSaving();
+    }
 }

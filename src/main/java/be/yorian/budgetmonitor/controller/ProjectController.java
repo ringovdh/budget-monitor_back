@@ -1,6 +1,6 @@
 package be.yorian.budgetmonitor.controller;
 
-import be.yorian.budgetmonitor.dto.ProjectOverviewDTO;
+import be.yorian.budgetmonitor.dto.ProjectOverview;
 import be.yorian.budgetmonitor.entity.Project;
 import be.yorian.budgetmonitor.response.CustomResponse;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +14,7 @@ public interface ProjectController {
                                                             Optional<Integer> page,
                                                             Optional<Integer> size);
 
-    List<ProjectOverviewDTO> getProjects();
+    List<ProjectOverview> getProjects();
 
     void createProject(Project project);
 

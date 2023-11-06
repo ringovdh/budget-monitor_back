@@ -36,9 +36,8 @@ public class TransactionsPerCategory {
     }
 
     public void calculateAndSetTotal(List<Transaction> transactions) {
-        double positive = transactions.stream().filter(transaction -> transaction.sign.equals("+")).mapToDouble(Transaction::getAmount).sum();
-        double negative = transactions.stream().filter(transaction -> transaction.sign.equals("-")).mapToDouble(Transaction::getAmount).sum();
-
-        setTotal(positive - negative);
+        setTotal(transactions.stream()
+                .mapToDouble(Transaction::getAmountWithSign)
+                .sum());
     }
 }

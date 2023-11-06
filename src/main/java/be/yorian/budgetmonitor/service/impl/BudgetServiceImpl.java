@@ -1,11 +1,12 @@
 package be.yorian.budgetmonitor.service.impl;
 
 import be.yorian.budgetmonitor.dto.BudgetOverviewPerCategory;
-import be.yorian.budgetmonitor.dto.BudgetOverviewPerYear;
+import be.yorian.budgetmonitor.dto.BudgetPerCategory;
+import be.yorian.budgetmonitor.dto.BudgetPerMonth;
+import be.yorian.budgetmonitor.dto.GraphData;
 import be.yorian.budgetmonitor.dto.MonthlyBudgetOverview;
-import be.yorian.budgetmonitor.dto.TransactionsPerCategory;
+import be.yorian.budgetmonitor.dto.YearlyBudgetOverview;
 import be.yorian.budgetmonitor.entity.Category;
-import be.yorian.budgetmonitor.entity.MonthGraphData;
 import be.yorian.budgetmonitor.entity.Transaction;
 import be.yorian.budgetmonitor.repository.TransactionRepository;
 import be.yorian.budgetmonitor.service.BudgetService;
@@ -34,9 +35,9 @@ public class BudgetServiceImpl implements BudgetService {
     public MonthlyBudgetOverview getBudgetOverviewPerMonth(int month, int year) {
         Map<Category, List<Transaction>> groupedByCategory = transactionRepository.findByDateContainingYearAndMonth(month, year)
                 .stream().collect(groupingBy(Transaction::getCategory));
-        List<TransactionsPerCategory> transactionsPerCategories = groupMonthBudgetByCategory(groupedByCategory);
-        MonthGraphData graphData = retrieveMonthGroupData(groupedByCategory, month, year);
-        return new MonthlyBudgetOverview(transactionsPerCategories, graphData);
+        List<BudgetPerCategory> budgetPerCategoryList = createBudgetPerCategoryList(groupedByCategory, year);
+        GraphData graphData = retrieveMonthlyGraphData(groupedByCategory, month, year);
+        return new MonthlyBudgetOverview(budgetPerCategoryList, graphData);
     }
 
     @Override
@@ -61,53 +62,122 @@ public class BudgetServiceImpl implements BudgetService {
     }
 
     @Override
-    public List<BudgetOverviewPerYear> getBudgetOverviewPerYear(int year) {
-        List <BudgetOverviewPerYear> dtos = new ArrayList<>();
-        transactionRepository.findByDateContainingYear(year).stream()
-                .collect(groupingBy(t -> t.getDate().getMonthValue()))
-                .forEach((month, transactions) -> {
-                    BudgetOverviewPerYear dto = new BudgetOverviewPerYear();
-                    dto.setMonth(month);
-                    dto.setTransactionsPerMonth(groupMonthBudgetByCategory(transactions));
-                    dtos.add(dto);
-                });
-
-        return dtos;
+    public YearlyBudgetOverview getBudgetOverviewPerYear(int year) {
+        Map<Integer, List<Transaction>> groupedByMonth = transactionRepository.findByDateContainingYear(year).stream()
+                .collect(groupingBy(transaction -> transaction.getDate().getMonthValue()));
+        List<BudgetPerMonth> budgetPerMonthList = createBudgetPerMonthList(groupedByMonth);
+        GraphData graphData = retrieveYearlyGraphData(budgetPerMonthList);
+        return new YearlyBudgetOverview(budgetPerMonthList, graphData);
     }
 
-    private List<TransactionsPerCategory> groupMonthBudgetByCategory(List<Transaction> transactions) {
-        List<TransactionsPerCategory> dtos = new ArrayList<>();
-        transactions.stream()
-                .collect(groupingBy(Transaction::getCategory))
-                .forEach((category, txs) -> {
-                    TransactionsPerCategory dto = new TransactionsPerCategory();
-                    dto.setCategory(category);
-                    dto.setTransactions(txs);
-                    dto.calculateAndSetTotal(txs);
-                    dtos.add(dto);
-                });
-        return dtos;
-    }
-
-    private List<TransactionsPerCategory> groupMonthBudgetByCategory(Map<Category, List<Transaction>> groupedByCategory) {
-        List<TransactionsPerCategory> dtos = new ArrayList<>();
-        groupedByCategory.forEach((category, txs) -> {
-            TransactionsPerCategory dto = new TransactionsPerCategory();
-            dto.setCategory(category);
-            dto.setTransactions(txs);
-            dto.calculateAndSetTotal(txs);
-            dtos.add(dto);
+    private List<BudgetPerCategory> createBudgetPerCategoryList(Map<Category, List<Transaction>> groupedByCategory, int year) {
+        List<BudgetPerCategory> budgetPerCategoryList = new ArrayList<>();
+        groupedByCategory.forEach((category, transactions) -> {
+            BudgetPerCategory bpc = new BudgetPerCategory(
+                    year,
+                    category,
+                    transactions,
+                    calculateTotalForCategory(transactions)
+            );
+            budgetPerCategoryList.add(bpc);
         });
-        return dtos;
+        return budgetPerCategoryList;
     }
 
-    private MonthGraphData retrieveMonthGroupData(Map<Category, List<Transaction>> groupedByCategory, int month, int year) {
-        List<Integer> days = fillDaysOfMonth(month, year);
-        Map<Integer, Double> incommingAmounts = handleIncommingBudget(groupedByCategory, days);
-        Map<Integer, Double> fixedCostAmounts = handleFixedCostBudget(groupedByCategory, days);
-        Map<Integer, Double> otherCostAmounts = handleOtherCostBudget(groupedByCategory, days);
+    private List<BudgetPerMonth> createBudgetPerMonthList(Map<Integer, List<Transaction>> groupedByMonth) {
+        List<BudgetPerMonth> budgetPerMonthList = new ArrayList<>();
+        groupedByMonth.forEach((month, transactions) -> {
+            BudgetPerMonth bpm = new BudgetPerMonth(
+                    month,
+                    calculateTotalIncomingBudget(transactions),
+                    calculateTotalFixedOutgoingBudget(transactions),
+                    calculateTotalOutgoingBudget(transactions),
+                    calculateTotalSavings(transactions)
+            );
+            budgetPerMonthList.add(bpm);
+        });
+        return budgetPerMonthList;
+    }
 
-        return new MonthGraphData(days, incommingAmounts, fixedCostAmounts, otherCostAmounts);
+    private double calculateTotalForCategory(List<Transaction> transactions) {
+        return transactions.stream()
+                .mapToDouble(Transaction::getAmountWithSign)
+                .sum();
+    }
+
+    private double calculateTotalSavings(List<Transaction> transactions) {
+        return transactions.stream()
+                .filter(tx -> tx.category.isSaving())
+                .mapToDouble(Transaction::getAmountWithSign)
+                .sum();
+    }
+
+    private double calculateTotalOutgoingBudget(List<Transaction> transactions) {
+        return transactions.stream()
+                .filter(tx -> tx.category.isOtherCost())
+                .mapToDouble(Transaction::getAmountWithSign)
+                .sum();
+    }
+
+    private double calculateTotalFixedOutgoingBudget(List<Transaction> transactions) {
+        return transactions.stream()
+                .filter(tx -> tx.category.fixedcost)
+                .mapToDouble(Transaction::getAmountWithSign)
+                .sum();
+    }
+
+    private Double calculateTotalIncomingBudget(List<Transaction> transactions) {
+        return transactions.stream()
+                .filter(tx -> tx.category.revenue)
+                .mapToDouble(Transaction::getAmountWithSign)
+                .sum();
+    }
+
+    private GraphData retrieveMonthlyGraphData(Map<Category, List<Transaction>> groupedByCategory, int month, int year) {
+        List<Integer> days = fillDaysOfMonth(month, year);
+        return new GraphData(
+                days,
+                handleIncommingBudget(groupedByCategory, days),
+                handleFixedCostBudget(groupedByCategory, days),
+                handleOtherCostBudget(groupedByCategory, days)
+        );
+    }
+
+    private GraphData retrieveYearlyGraphData(List<BudgetPerMonth> budgetPerMonthList) {
+        return new GraphData(
+                fillMonths(),
+                mapIncommingAmountsToGraphData(budgetPerMonthList),
+                mapFixedCostAmountsToGraphData(budgetPerMonthList),
+                mapOtherCostAmountsToGraphData(budgetPerMonthList));
+    }
+
+    private Map<Integer, Double> mapOtherCostAmountsToGraphData(List<BudgetPerMonth> budgetList) {
+        Map<Integer, Double> mappedBudget = new HashMap<>();
+        budgetList.forEach(bpm -> mappedBudget.put(bpm.month(), -bpm.totalOutgoingBudget()));
+        mergeAmountsWithPrevious(mappedBudget);
+        return mappedBudget;
+    }
+
+    private Map<Integer, Double> mapFixedCostAmountsToGraphData(List<BudgetPerMonth> budgetList) {
+        Map<Integer, Double> mappedBudget = new HashMap<>();
+        budgetList.forEach(bpm -> mappedBudget.put(bpm.month(), -bpm.totalFixedOutgoingBudget()));
+        mergeAmountsWithPrevious(mappedBudget);
+        return mappedBudget;
+    }
+
+    private Map<Integer, Double> mapIncommingAmountsToGraphData(List<BudgetPerMonth> budgetList) {
+        Map<Integer, Double> mappedBudget = new HashMap<>();
+        budgetList.forEach(bpm -> mappedBudget.put(bpm.month(), bpm.totalIncomingBudget()));
+        mergeAmountsWithPrevious(mappedBudget);
+        return mappedBudget;
+    }
+
+    private void mergeAmountsWithPrevious(Map<Integer, Double> amounts) {
+        amounts.forEach((key, amount) -> {
+            if (key != 1) {
+                amounts.merge(key, amounts.get(key-1), Double::sum);
+            }
+        });
     }
 
     private List<Integer> fillDaysOfMonth(int month, int year) {
@@ -117,6 +187,10 @@ public class BudgetServiceImpl implements BudgetService {
             days.add(i);
         }
         return days;
+    }
+
+    private List<Integer> fillMonths() {
+        return List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
     }
 
     private Map<Integer, Double> handleIncommingBudget(Map<Category, List<Transaction>> groupedByCategory,

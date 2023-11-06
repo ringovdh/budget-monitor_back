@@ -1,7 +1,7 @@
 package be.yorian.budgetmonitor.controller.impl;
 
 import be.yorian.budgetmonitor.controller.ProjectController;
-import be.yorian.budgetmonitor.dto.ProjectOverviewDTO;
+import be.yorian.budgetmonitor.dto.ProjectOverview;
 import be.yorian.budgetmonitor.entity.Project;
 import be.yorian.budgetmonitor.response.CustomResponse;
 import be.yorian.budgetmonitor.service.ProjectService;
@@ -45,7 +45,7 @@ public class ProjectControllerImpl implements ProjectController {
 
     @Override
     @GetMapping("/projects/")
-    public List<ProjectOverviewDTO> getProjects() {
+    public List<ProjectOverview> getProjects() {
         return projectService.getProjects();
     }
     
