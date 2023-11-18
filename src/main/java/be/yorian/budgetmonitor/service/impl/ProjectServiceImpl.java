@@ -37,9 +37,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public List<ProjectOverview> getProjects() {
         return projectRepository.findAll().stream().map(
-                p -> {
-                    return mapProjectToProjectOverviewDTO(p);
-                }
+                this::mapProjectToProjectOverviewDTO
         ).toList();
     }
 

@@ -4,4 +4,5 @@ import java.util.List;
 
 public record MonthlyBudgetOverview(
         List<BudgetPerCategory> budgetsPerCategory,
-        GraphData graphData) { }
+        GraphData graphData,
+        List<ProjectData> projectsData) { }

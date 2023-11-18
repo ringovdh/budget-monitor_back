@@ -5,6 +5,7 @@ import be.yorian.budgetmonitor.dto.BudgetPerCategory;
 import be.yorian.budgetmonitor.dto.BudgetPerMonth;
 import be.yorian.budgetmonitor.dto.GraphData;
 import be.yorian.budgetmonitor.dto.MonthlyBudgetOverview;
+import be.yorian.budgetmonitor.dto.ProjectData;
 import be.yorian.budgetmonitor.dto.YearlyBudgetOverview;
 import be.yorian.budgetmonitor.entity.Category;
 import be.yorian.budgetmonitor.entity.Transaction;
@@ -37,7 +38,9 @@ public class BudgetServiceImpl implements BudgetService {
                 .stream().collect(groupingBy(Transaction::getCategory));
         List<BudgetPerCategory> budgetPerCategoryList = createBudgetPerCategoryList(groupedByCategory, year);
         GraphData graphData = retrieveMonthlyGraphData(groupedByCategory, month, year);
-        return new MonthlyBudgetOverview(budgetPerCategoryList, graphData);
+        List<Transaction> transactions = transactionRepository.findByDateContainingYearAndMonthAndProjectNotNull(month, year);
+        List<ProjectData> projectData = retrieveProjectData(transactions);
+        return new MonthlyBudgetOverview(budgetPerCategoryList, graphData, projectData);
     }
 
     @Override
@@ -67,8 +70,11 @@ public class BudgetServiceImpl implements BudgetService {
                 .collect(groupingBy(transaction -> transaction.getDate().getMonthValue()));
         List<BudgetPerMonth> budgetPerMonthList = createBudgetPerMonthList(groupedByMonth);
         GraphData graphData = retrieveYearlyGraphData(budgetPerMonthList);
-        return new YearlyBudgetOverview(budgetPerMonthList, graphData);
+        List<Transaction> transactions = transactionRepository.findByDateContainingYearAndProjectNotNull(year);
+        List<ProjectData> projectData = retrieveProjectData(transactions);
+        return new YearlyBudgetOverview(budgetPerMonthList, graphData, projectData);
     }
+
 
     private List<BudgetPerCategory> createBudgetPerCategoryList(Map<Category, List<Transaction>> groupedByCategory, int year) {
         List<BudgetPerCategory> budgetPerCategoryList = new ArrayList<>();
@@ -92,7 +98,8 @@ public class BudgetServiceImpl implements BudgetService {
                     calculateTotalIncomingBudget(transactions),
                     calculateTotalFixedOutgoingBudget(transactions),
                     calculateTotalOutgoingBudget(transactions),
-                    calculateTotalSavings(transactions)
+                    calculateTotalSavings(transactions),
+                    transactions
             );
             budgetPerMonthList.add(bpm);
         });
@@ -106,7 +113,7 @@ public class BudgetServiceImpl implements BudgetService {
     }
 
     private double calculateTotalSavings(List<Transaction> transactions) {
-        return transactions.stream()
+        return 0 - transactions.stream()
                 .filter(tx -> tx.category.isSaving())
                 .mapToDouble(Transaction::getAmountWithSign)
                 .sum();
@@ -151,6 +158,19 @@ public class BudgetServiceImpl implements BudgetService {
                 mapOtherCostAmountsToGraphData(budgetPerMonthList));
     }
 
+    private List<ProjectData> retrieveProjectData(List<Transaction> transactions) {
+
+        List<ProjectData> projectDataList = new ArrayList<>();
+         transactions.stream()
+                .collect(groupingBy(Transaction::getProject))
+                .forEach((project, txs) -> {
+                    double total = txs.stream().mapToDouble(Transaction::getAmountWithSign).sum();
+                    projectDataList.add(new ProjectData(project, total));
+                });
+
+        return projectDataList;
+    }
+
     private Map<Integer, Double> mapOtherCostAmountsToGraphData(List<BudgetPerMonth> budgetList) {
         Map<Integer, Double> mappedBudget = new HashMap<>();
         budgetList.forEach(bpm -> mappedBudget.put(bpm.month(), -bpm.totalOutgoingBudget()));
@@ -183,7 +203,7 @@ public class BudgetServiceImpl implements BudgetService {
     private List<Integer> fillDaysOfMonth(int month, int year) {
         List<Integer> days = new ArrayList<>();
         int lengthOfMonth = YearMonth.of(year, month).lengthOfMonth();
-        for(int i = 1; i <= lengthOfMonth; i++) {
+        for (int i = 1; i <= lengthOfMonth; i++) {
             days.add(i);
         }
         return days;
@@ -199,21 +219,19 @@ public class BudgetServiceImpl implements BudgetService {
 
         groupedByCategory.forEach((category, txs) -> {
             if (category.isRevenue()) {
-                days.forEach(d -> {
-                    txs.forEach(t -> {
-                        if (d == t.getDate().getDayOfMonth()) {
-                            if (incommingBudget.containsKey(d)) {
-                                incommingBudget.merge(d, t.amount, Double::sum);
-                            } else {
-                                incommingBudget.put(d, t.amount);
-                            }
+                days.forEach(d -> txs.forEach(t -> {
+                    if (d == t.getDate().getDayOfMonth()) {
+                        if (incommingBudget.containsKey(d)) {
+                            incommingBudget.merge(d, t.amount, Double::sum);
                         } else {
-                            if (!incommingBudget.containsKey(d)) {
-                                incommingBudget.put(d, 0.0);
-                            }
+                            incommingBudget.put(d, t.amount);
                         }
-                    });
-                });
+                    } else {
+                        if (!incommingBudget.containsKey(d)) {
+                            incommingBudget.put(d, 0.0);
+                        }
+                    }
+                }));
             }
         });
         incommingBudget.forEach((day, amount) -> {
@@ -231,22 +249,20 @@ public class BudgetServiceImpl implements BudgetService {
 
         groupedByCategory.forEach((category, txs) -> {
             if (category.isFixedcost()) {
-                days.forEach(d -> {
-                    txs.forEach(t -> {
-                        if (d == t.getDate().getDayOfMonth()) {
-                            double amount = t.sign.equals("+") ? t.amount : 0.0-t.amount;
-                            if (fixedCostBudget.containsKey(d)) {
-                                fixedCostBudget.merge(d, -amount, Double::sum);
-                            } else {
-                                fixedCostBudget.put(d, -amount);
-                            }
+                days.forEach(d -> txs.forEach(t -> {
+                    if (d == t.getDate().getDayOfMonth()) {
+                        double amount = t.sign.equals("+") ? t.amount : 0.0-t.amount;
+                        if (fixedCostBudget.containsKey(d)) {
+                            fixedCostBudget.merge(d, -amount, Double::sum);
                         } else {
-                            if (!fixedCostBudget.containsKey(d)) {
-                                fixedCostBudget.put(d, 0.0);
-                            }
+                            fixedCostBudget.put(d, -amount);
                         }
-                    });
-                });
+                    } else {
+                        if (!fixedCostBudget.containsKey(d)) {
+                            fixedCostBudget.put(d, 0.0);
+                        }
+                    }
+                }));
             }
         });
         fixedCostBudget.forEach((day, amount) -> {
@@ -264,22 +280,20 @@ public class BudgetServiceImpl implements BudgetService {
 
         groupedByCategory.forEach((category, txs) -> {
             if (!category.isFixedcost() && !category.saving && !category.isRevenue()) {
-                days.forEach(d -> {
-                    txs.forEach(t -> {
-                        double amount = t.sign.equals("+") ? t.amount : 0.0 - t.amount;
-                        if (d == t.getDate().getDayOfMonth()) {
-                            if (otherCostBudget.containsKey(d)) {
-                                otherCostBudget.merge(d, -amount, Double::sum);
-                            } else {
-                                otherCostBudget.put(d, -amount);
-                            }
+                days.forEach(d -> txs.forEach(t -> {
+                    double amount = t.sign.equals("+") ? t.amount : 0.0 - t.amount;
+                    if (d == t.getDate().getDayOfMonth()) {
+                        if (otherCostBudget.containsKey(d)) {
+                            otherCostBudget.merge(d, -amount, Double::sum);
                         } else {
-                            if (!otherCostBudget.containsKey(d)) {
-                                otherCostBudget.put(d, 0.0);
-                            }
+                            otherCostBudget.put(d, -amount);
                         }
-                    });
-                });
+                    } else {
+                        if (!otherCostBudget.containsKey(d)) {
+                            otherCostBudget.put(d, 0.0);
+                        }
+                    }
+                }));
             }
         });
         otherCostBudget.forEach((day, amount) -> {
