@@ -26,7 +26,7 @@ public class PDFReader {
     }
 
     public List<Transaction> parsePDFToTransactions()  {
-        String text = null;
+        String text = "";
         try {
             text = createTextFromPDF();
         } catch (IOException e) {
@@ -44,15 +44,11 @@ public class PDFReader {
         parser.parse();
         COSDocument cosDoc = parser.getDocument();
         PDFTextStripper pdfStripper = new PDFTextStripper();
-        PDDocument pdDoc = new PDDocument(cosDoc);
-        try {
+        try (PDDocument pdDoc = new PDDocument(cosDoc)) {
             pdDoc.getNumberOfPages();
             pdfStripper.setStartPage(1);
             pdfStripper.setEndPage(pdDoc.getNumberOfPages());
             text = pdfStripper.getText(pdDoc);
-        }
-        finally {
-            pdDoc.close();
         }
 
         return text;
@@ -72,19 +68,19 @@ public class PDFReader {
         int counter = 0;
         List<Transaction> transactions = new ArrayList<>();
         String year = null;
-        String lines[] = text.split("[\\r\\n]+");
+        String[] lines = text.split("[\\r\\n]+");
         for (String line : lines) {
-            String words[] = line.split("\\s+");
+            String[] words = line.split("\\s+");
             if (words.length >= 2) {
                 if (words[0].equals("Premium")) {
                     year = words[4] ;
                 }
-                if (words[0].equals("") && words[1].matches("[0-9]{4}") && !words[2].matches("[0-9]{4}")) {
+                if (words[0].isEmpty() && words[1].matches("[0-9]{4}") && !words[2].matches("[0-9]{4}")) {
                     int length = words.length;
                     if(words[length -1].equals("+") || words[length -1].equals("-")){
                         transactions.add(mapShortTransaction(words, year));
                     } else {
-                        mapLongTransaction(counter, lines, transactions, year);
+                        transactions.add(mapLongTransaction(counter, lines, year));
                     }
                 }
             }
@@ -94,44 +90,41 @@ public class PDFReader {
         return transactions;
     }
 
-    private void mapLongTransaction(int positieEersteLijn, String lines[], List<Transaction> transactions, String year) {
+    private Transaction mapLongTransaction(int positieEersteLijn, String[] lines, String year) {
         Transaction tx = null;
-        Boolean isRightSign = false;
+        boolean isRightSign = false;
         int positieLaatsteLijn = positieEersteLijn;
         String line = lines[positieEersteLijn];
-        String firstLine[] = line.split("\\s+");
+        String[] firstLine = line.split("\\s+");
         try {
             tx = new Transaction(firstLine[1]);
-            String lastLine[] = firstLine;
+            String[] lastLine = firstLine;
             while (!isRightSign) {
                 while (!hasSign(lastLine)) {
                     firstLine = concatenate(firstLine, lastLine);
                     positieLaatsteLijn++;
                     line = lines[positieLaatsteLijn];
                     lastLine = line.split("\\s+");
-
                 }
                 int length = lastLine.length;
                 if (lastLine[length - 1].equals("-")) {
                     tx.setSign(lastLine[length - 1]);
                     tx.setAmount(convertAmount(lastLine[length - 2]));
                     tx.setDate(convertDate(lastLine[length - 3] + "-" + year));
-                    transactions.add(tx);
-                    isRightSign = true;
                 } else {
                     tx.setSign("+");
                     tx.setAmount(convertAmount(lastLine[length - 1]));
                     tx.setDate(convertDate(lastLine[length - 2] + "-" + year));
-                    transactions.add(tx);
-                    isRightSign = true;
                 }
+                isRightSign = true;
             }
 
             tx.setOriginalComment(bepaalLangeOmschrijving(firstLine.length, firstLine));
+            return tx;
         } catch (Exception ex) {
             System.out.println("fout in tx: " + tx.getNumber());
             tx.setOriginalComment(bepaalLangeOmschrijving(firstLine.length, firstLine));
-            transactions.add(tx);
+            return tx;
         }
     }
 
@@ -178,7 +171,7 @@ public class PDFReader {
         return c;
     }
 
-    private boolean hasSign(String words[]){
+    private boolean hasSign(String[] words){
 
         boolean hasSign = false;
         int length = words.length;

@@ -6,6 +6,7 @@ import be.yorian.budgetmonitor.dto.BudgetPerMonth;
 import be.yorian.budgetmonitor.dto.GraphData;
 import be.yorian.budgetmonitor.dto.MonthlyBudgetOverview;
 import be.yorian.budgetmonitor.dto.ProjectData;
+import be.yorian.budgetmonitor.dto.SavingsData;
 import be.yorian.budgetmonitor.dto.YearlyBudgetOverview;
 import be.yorian.budgetmonitor.entity.Category;
 import be.yorian.budgetmonitor.entity.Transaction;
@@ -14,6 +15,7 @@ import be.yorian.budgetmonitor.service.BudgetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Year;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -66,13 +68,14 @@ public class BudgetServiceImpl implements BudgetService {
 
     @Override
     public YearlyBudgetOverview getBudgetOverviewPerYear(int year) {
-        Map<Integer, List<Transaction>> groupedByMonth = transactionRepository.findByDateContainingYear(year).stream()
+        List<Transaction> transactions = transactionRepository.findByDateContainingYear(year);
+        Map<Integer, List<Transaction>> groupedByMonth = transactions.stream()
                 .collect(groupingBy(transaction -> transaction.getDate().getMonthValue()));
         List<BudgetPerMonth> budgetPerMonthList = createBudgetPerMonthList(groupedByMonth);
         GraphData graphData = retrieveYearlyGraphData(budgetPerMonthList);
-        List<Transaction> transactions = transactionRepository.findByDateContainingYearAndProjectNotNull(year);
         List<ProjectData> projectData = retrieveProjectData(transactions);
-        return new YearlyBudgetOverview(budgetPerMonthList, graphData, projectData);
+        SavingsData savingsData = retrieveSavingsData(transactions, year);
+        return new YearlyBudgetOverview(budgetPerMonthList, graphData, savingsData, projectData);
     }
 
 
@@ -159,16 +162,45 @@ public class BudgetServiceImpl implements BudgetService {
     }
 
     private List<ProjectData> retrieveProjectData(List<Transaction> transactions) {
-
         List<ProjectData> projectDataList = new ArrayList<>();
-         transactions.stream()
+        transactions.stream()
+                .filter(txs -> txs.getProject() != null)
                 .collect(groupingBy(Transaction::getProject))
                 .forEach((project, txs) -> {
                     double total = txs.stream().mapToDouble(Transaction::getAmountWithSign).sum();
                     projectDataList.add(new ProjectData(project, total));
                 });
-
         return projectDataList;
+    }
+
+    private SavingsData retrieveSavingsData(List<Transaction> transactions, int year) {
+        List<Integer> days = fillDaysOfYear(year);
+        List<Transaction> savings = transactions.stream()
+                .filter(txs -> txs.category.isSaving()).toList();
+
+        return new SavingsData(
+                days,
+                mapSavingsToGraphData(savings, days));
+    }
+
+    private Map<Integer, Double> mapSavingsToGraphData(List<Transaction> savings, List<Integer> days) {
+        Map<Integer, Double> mappedSavings = new HashMap<>();
+        days.forEach(d -> savings.forEach(t -> {
+                    if (d == t.getDate().getDayOfYear()) {
+                        if (mappedSavings.containsKey(d)) {
+                            mappedSavings.merge(d, t.getAmountWithSign(), Double::sum);
+                        } else {
+                            mappedSavings.put(d, t.getAmountWithSign());
+                        }
+                    } else {
+                        if (!mappedSavings.containsKey(d)) {
+                            mappedSavings.put(d, 0.0);
+                        }
+                    }
+                })
+        );
+        mergeAmountsWithPrevious(mappedSavings);
+        return mappedSavings;
     }
 
     private Map<Integer, Double> mapOtherCostAmountsToGraphData(List<BudgetPerMonth> budgetList) {
@@ -198,6 +230,15 @@ public class BudgetServiceImpl implements BudgetService {
                 amounts.merge(key, amounts.get(key-1), Double::sum);
             }
         });
+    }
+
+    private List<Integer> fillDaysOfYear(int year) {
+        List<Integer> days = new ArrayList<>();
+        int lengthOfYear = Year.of(year).length();
+        for (int i = 1; i <= lengthOfYear; i++) {
+            days.add(i);
+        }
+        return days;
     }
 
     private List<Integer> fillDaysOfMonth(int month, int year) {

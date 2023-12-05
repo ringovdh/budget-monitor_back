@@ -9,6 +9,7 @@ import be.yorian.budgetmonitor.repository.TransactionRepository;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static java.util.stream.Collectors.groupingBy;
@@ -57,6 +58,7 @@ public class ImportResponseHelper {
                 existingTransactions.add(existingTransaction);
             }
         }
+        newTransactions.sort(Comparator.comparing(Transaction::getDate));
 
         this.response.setExistingTransactions(createBudgetOverview(existingTransactions));
         this.response.setNewTransactions(newTransactions);
