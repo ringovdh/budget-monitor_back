@@ -10,11 +10,13 @@ public interface ProjectService {
 
     void saveProject(Project project);
 
-    Page<Project> getProjectsByProjectname(String projectname, int page, int size);
+    Page<Project> getProjectByProjectname(String projectname, int page, int size);
 
     void updateProject(Long projectId, Project project);
 
     void deleteProject(Long projectId);
 
-    List<ProjectOverview> getProjects();
+    List<Project> getProjects();
+
+    List<ProjectOverview> getProjectOverview();
 }

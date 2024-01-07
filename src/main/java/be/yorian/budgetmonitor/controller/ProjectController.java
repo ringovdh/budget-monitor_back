@@ -10,11 +10,13 @@ import java.util.Optional;
 
 public interface ProjectController {
 
-    ResponseEntity<CustomResponse> getProjectsByProjectname(Optional<String> projectname,
-                                                            Optional<Integer> page,
-                                                            Optional<Integer> size);
+    ResponseEntity<CustomResponse> getProjectByProjectname(Optional<String> projectname,
+                                                           Optional<Integer> page,
+                                                           Optional<Integer> size);
 
-    List<ProjectOverview> getProjects();
+    List<Project> getProjects();
+
+    List<ProjectOverview> getProjectOverview();
 
     void createProject(Project project);
 

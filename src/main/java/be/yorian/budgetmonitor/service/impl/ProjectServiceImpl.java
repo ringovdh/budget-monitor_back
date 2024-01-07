@@ -30,29 +30,20 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Page<Project> getProjectsByProjectname(String projectname, int page, int size) {
+    public Page<Project> getProjectByProjectname(String projectname, int page, int size) {
         return projectRepository.findByProjectnameContaining(projectname, of(page, size));
     }
 
     @Override
-    public List<ProjectOverview> getProjects() {
+    public List<Project> getProjects() {
+        return projectRepository.findAll();
+    }
+
+    @Override
+    public List<ProjectOverview> getProjectOverview() {
         return projectRepository.findAll().stream().map(
                 this::mapProjectToProjectOverviewDTO
         ).toList();
-    }
-
-    private ProjectOverview mapProjectToProjectOverviewDTO(Project p) {
-        List<Transaction> transactions = transactionRepository.findByProjectProjectname(p.getProjectname());
-        return new ProjectOverview(
-                p.getId(),
-                p.getProjectname(),
-                p.getDescription(),
-                p.getStartdate(),
-                p.getEnddate(),
-                p.getIcon(),
-                transactions,
-                calculateProjectTotal(transactions)
-        );
     }
 
     @Override
@@ -78,10 +69,18 @@ public class ProjectServiceImpl implements ProjectService {
         projectRepository.deleteById(projectId);
     }
 
-    public BigDecimal calculateProjectTotal(List<Transaction> transactions) {
-        return new BigDecimal(
-                transactions.stream()
-                        .mapToDouble(Transaction::getAmount)
-                        .sum());
+    private ProjectOverview mapProjectToProjectOverviewDTO(Project p) {
+        List<Transaction> transactions = transactionRepository.findByProjectProjectname(p.getProjectname());
+        return new ProjectOverview(
+                p,
+                transactions,
+                calculateProjectTotal(transactions)
+        );
+    }
+
+    private BigDecimal calculateProjectTotal(List<Transaction> transactions) {
+        return BigDecimal.valueOf(transactions.stream()
+                .mapToDouble(Transaction::getAmount)
+                .sum());
     }
 }
