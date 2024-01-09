@@ -7,7 +7,6 @@ import be.yorian.budgetmonitor.dto.YearlyBudgetOverview;
 import be.yorian.budgetmonitor.service.BudgetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,7 +15,6 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
 public class BudgetControllerImpl implements BudgetController {
 
     private final BudgetService budgetService;

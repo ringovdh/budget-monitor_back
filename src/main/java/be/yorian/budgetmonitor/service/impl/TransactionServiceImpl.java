@@ -5,13 +5,10 @@ import be.yorian.budgetmonitor.repository.TransactionRepository;
 import be.yorian.budgetmonitor.service.TransactionService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
-import static org.springframework.data.domain.PageRequest.of;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -27,11 +24,6 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public List<Transaction> getTransactions() {
         return transactionRepository.findAll(sortByDate());
-    }
-
-    @Override
-    public Page<Transaction> getTransactionsByComment(String comment, Integer page, Integer size){
-        return transactionRepository.findByCommentContaining(comment, of(page, size));
     }
 
     @Override
