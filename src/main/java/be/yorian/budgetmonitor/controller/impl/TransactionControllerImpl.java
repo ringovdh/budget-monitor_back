@@ -42,7 +42,6 @@ public class TransactionControllerImpl implements TransactionController {
         return transactionService.getTransactions();
     }
 
-
     @Override
     @GetMapping(produces = "application/json", path="transactions/category")
     public ResponseEntity<List<BudgetOverviewPerCategory>> getTransactionsByCategory(@RequestParam Optional<Long> categoryId,
