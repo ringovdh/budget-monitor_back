@@ -12,7 +12,7 @@
 
     <groupId>be.yorian</groupId>
     <artifactId>budgetMonitorDomain</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0</version>
     <name>budgetMonitorDomain</name>
     <description>budgetMonitorDomain</description>
 
@@ -28,7 +28,7 @@
         <dependency>
             <groupId>be.yorian</groupId>
             <artifactId>transactionAdapterBNP</artifactId>
-            <version>${project.version}</version>
+            <version>1.0</version>
         </dependency>
 
         <dependency>

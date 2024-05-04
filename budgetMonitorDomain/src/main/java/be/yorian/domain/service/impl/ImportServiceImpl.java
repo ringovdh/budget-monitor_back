@@ -38,7 +38,7 @@ public class ImportServiceImpl implements ImportService {
         TransactionAdapter transactionAdapter = TransactionAdapterFactory.createTransactionAdapter();
         List<TransactionDTO> transactionDtos = new ArrayList<>();
         if (null != file.getOriginalFilename()) {
-            File convFile = new File(file.getOriginalFilename());
+            File convFile = new File("temp/"+file.getOriginalFilename());
             try {
                 convFile.createNewFile();
                 FileOutputStream fos = new FileOutputStream(convFile);
