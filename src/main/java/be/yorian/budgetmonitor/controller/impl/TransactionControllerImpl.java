@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,6 +25,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
+@RequestMapping("/transactions")
 public class TransactionControllerImpl implements TransactionController {
 
     private final TransactionService transactionService;
@@ -37,13 +39,13 @@ public class TransactionControllerImpl implements TransactionController {
     }
 
     @Override
-    @GetMapping("/transactions")
+    @GetMapping()
     public List<Transaction> getTransactions() {
         return transactionService.getTransactions();
     }
 
     @Override
-    @GetMapping(produces = "application/json", path="transactions/category")
+    @GetMapping(produces = "application/json", path="/category")
     public ResponseEntity<List<BudgetOverviewPerCategory>> getTransactionsByCategory(@RequestParam Optional<Long> categoryId,
                                                                     @RequestParam Optional<Integer> year) {
         List<BudgetOverviewPerCategory> budgetOverviewPerCategory = budgetService.getBudgetOverviewPerCategory(categoryId.orElse(0L),
@@ -59,25 +61,25 @@ public class TransactionControllerImpl implements TransactionController {
     }
 
     @Override
-    @GetMapping("/transactions/{month}/{year}")
+    @GetMapping("/{month}/{year}")
     public List<Transaction> getTransactionsByMonth(@PathVariable String month, @PathVariable String year) {
         return transactionService.getTransactionsByMonth(month, year);
     }
 
 	@Override
-    @PostMapping("/transactions")
+    @PostMapping()
     public Transaction saveTransaction(@RequestBody Transaction transaction) {
         return transactionService.saveTransaction(transaction);
     }
 
     @Override
-    @PutMapping("/transactions/{id}")
+    @PutMapping("/{id}")
     public Transaction updateTransaction(@PathVariable("id")Long id, @RequestBody Transaction transaction) {
         return transactionService.updateTransaction(id, transaction);
     }
 
     @Override
-    @DeleteMapping("/transactions/{id}")
+    @DeleteMapping("/{id}")
     public void deleteTransaction(@PathVariable("id")Long id) {
         transactionService.deleteTransaction(id);
     }
