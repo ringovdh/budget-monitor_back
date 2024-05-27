@@ -43,10 +43,6 @@ public class Transaction {
         this.id = id;
     }
 
-    public Transaction(String number) {
-        this.number = number;
-    }
-
     public String getNumber() {
         return number;
     }
@@ -112,6 +108,30 @@ public class Transaction {
             return amount;
         } else {
         return -amount;
+        }
+    }
+
+    public static class TransactionBuilder {
+        private String number;
+        private Double amount;
+        private String sign;
+        private LocalDate date;
+        private String comment;
+        private String originalComment;
+        private Category category;
+        private Project project;
+
+        public TransactionBuilder(String number) {
+            this.number = number;
+        }
+
+        public TransactionBuilder amount(Double amount) {
+            this.amount = amount;
+            return this;
+        }
+
+        public Transaction build() {
+            return new Transaction();
         }
     }
 

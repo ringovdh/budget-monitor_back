@@ -26,4 +26,16 @@ public final class TransactionMapper {
                 transaction.comment
         );
     }
+
+    public static TransactionEntity mapToEntity(Transaction transaction) {
+        TransactionEntity te = new TransactionEntity();
+        te.number = transaction.getNumber();
+        te.amount = transaction.getAmount();
+        te.sign = transaction.getSign();
+        te.date = transaction.getDate();
+        te.comment = transaction.getComment();
+        te.category = transaction.getCategory();
+        te.project = transaction.getProject();
+        return te;
+    }
 }

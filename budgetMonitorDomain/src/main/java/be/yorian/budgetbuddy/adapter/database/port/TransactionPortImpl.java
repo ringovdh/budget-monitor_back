@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static be.yorian.budgetbuddy.mapper.TransactionMapper.mapToEntity;
+
 @Service
 public class TransactionPortImpl implements TransactionPort {
 
@@ -25,7 +27,7 @@ public class TransactionPortImpl implements TransactionPort {
 
     @Override
     public Transaction saveTransaction(Transaction transaction) {
-        TransactionEntity transactionEntity = new TransactionEntity();
+        TransactionEntity transactionEntity = mapToEntity(transaction);
         transactionEntityRepository.save(transactionEntity);
         return transaction;
     }
