@@ -1,11 +1,11 @@
 package be.yorian.budgetbuddy.service.impl;
 
-import be.yorian.budgetbuddy.adapter.database.entity.TransactionEntity;
-import be.yorian.budgetbuddy.adapter.database.repository.TransactionEntityRepository;
+import be.yorian.budgetbuddy.repository.adapter.entity.TransactionEntity;
+import be.yorian.budgetbuddy.repository.adapter.repository.TransactionEntityRepository;
 import be.yorian.budgetbuddy.helper.ImportResponseHelper;
 import be.yorian.budgetbuddy.mapper.TransactionMapper;
 import be.yorian.budgetbuddy.model.ImportTransactionsResponse;
-import be.yorian.budgetbuddy.repository.CommentRepository;
+import be.yorian.budgetbuddy.repository.repo.CommentRepository;
 import be.yorian.budgetbuddy.service.ImportService;
 import be.yorian.transactionAdapterBNP.adapter.TransactionAdapter;
 import be.yorian.transactionAdapterBNP.adapter.TransactionAdapterFactory;
@@ -50,7 +50,7 @@ public class ImportServiceImpl implements ImportService {
             }
             transactionDtos = transactionAdapter.convertPdfFile(convFile);
         }
-        List<TransactionEntity> transactionEntities = transactionDtos.stream().map(TransactionMapper::mapTransaction).toList();
+        List<TransactionEntity> transactionEntities = transactionDtos.stream().map(TransactionMapper::mapDTOToTransactionEntity).toList();
         ImportResponseHelper helper = new ImportResponseHelper(transactionRepository, commentRepository, transactionEntities);
 
         return helper.createImportResponse();

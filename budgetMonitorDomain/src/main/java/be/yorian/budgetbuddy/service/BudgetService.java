@@ -9,7 +9,7 @@ import java.util.List;
 public interface BudgetService {
     MonthlyBudgetOverview getBudgetOverviewPerMonth(int month, int year);
 
-    List<BudgetOverviewPerCategory> getBudgetOverviewPerCategory(Long categoryId, int year);
+    List<BudgetOverviewPerCategory> getBudgetOverviewPerCategory(long categoryId, int year);
 
     YearlyBudgetOverview getBudgetOverviewPerYear(int year);
 

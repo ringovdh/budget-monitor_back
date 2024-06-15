@@ -1,7 +1,7 @@
 package be.yorian.budgetbuddy.service.impl;
 
 import be.yorian.budgetbuddy.model.Comment;
-import be.yorian.budgetbuddy.repository.CommentRepository;
+import be.yorian.budgetbuddy.repository.repo.CommentRepository;
 import be.yorian.budgetbuddy.service.CommentService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;

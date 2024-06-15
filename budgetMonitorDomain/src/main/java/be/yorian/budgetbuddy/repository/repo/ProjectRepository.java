@@ -1,4 +1,4 @@
-package be.yorian.budgetbuddy.repository;
+package be.yorian.budgetbuddy.repository.repo;
 
 import be.yorian.budgetbuddy.model.Project;
 import org.springframework.data.domain.Page;

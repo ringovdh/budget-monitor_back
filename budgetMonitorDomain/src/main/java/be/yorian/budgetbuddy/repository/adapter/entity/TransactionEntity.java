@@ -1,4 +1,4 @@
-package be.yorian.budgetbuddy.adapter.database.entity;
+package be.yorian.budgetbuddy.repository.adapter.entity;
 
 import be.yorian.budgetbuddy.model.Category;
 import be.yorian.budgetbuddy.model.Project;
@@ -21,15 +21,15 @@ public class TransactionEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long tx_id;
 
-    public String number;
+    private String number;
 
-    public Double amount;
+    private Double amount;
 
-    public String sign;
+    private String sign;
 
-    public LocalDate date;
+    private LocalDate date;
 
-    public String comment;
+    private String comment;
 
     @Transient
     public String originalComment;

@@ -1,6 +1,6 @@
-package be.yorian.budgetbuddy.adapter.database.repository;
+package be.yorian.budgetbuddy.repository.adapter.repository;
 
-import be.yorian.budgetbuddy.adapter.database.entity.TransactionEntity;
+import be.yorian.budgetbuddy.repository.adapter.entity.TransactionEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,6 +1,6 @@
 package be.yorian.budgetbuddy.model;
 
-import be.yorian.budgetbuddy.adapter.database.entity.TransactionEntity;
+import be.yorian.budgetbuddy.repository.adapter.entity.TransactionEntity;
 import be.yorian.budgetbuddy.dto.TransactionsPerCategory;
 
 import java.util.List;

@@ -1,7 +1,7 @@
 package be.yorian.budgetbuddy.dto;
 
-import be.yorian.budgetbuddy.adapter.database.entity.TransactionEntity;
 import be.yorian.budgetbuddy.model.Category;
+import be.yorian.budgetbuddy.repository.adapter.entity.TransactionEntity;
 
 import java.util.List;
 
@@ -45,8 +45,8 @@ public class BudgetOverviewPerCategory {
     }
 
     public void calculateAndSetTotal(List<TransactionEntity> transactionEntities) {
-        double positive = transactionEntities.stream().filter(transaction -> transaction.sign.equals("+")).mapToDouble(TransactionEntity::getAmount).sum();
-        double negative = transactionEntities.stream().filter(transaction -> transaction.sign.equals("-")).mapToDouble(TransactionEntity::getAmount).sum();
+        double positive = transactionEntities.stream().filter(transaction -> transaction.getSign().equals("+")).mapToDouble(TransactionEntity::getAmount).sum();
+        double negative = transactionEntities.stream().filter(transaction -> transaction.getSign().equals("-")).mapToDouble(TransactionEntity::getAmount).sum();
 
         setTotal(positive - negative);
     }

@@ -1,7 +1,7 @@
 package be.yorian.budgetbuddy.service.impl;
 
-import be.yorian.budgetbuddy.adapter.database.entity.TransactionEntity;
-import be.yorian.budgetbuddy.adapter.database.repository.TransactionEntityRepository;
+import be.yorian.budgetbuddy.repository.adapter.entity.TransactionEntity;
+import be.yorian.budgetbuddy.repository.adapter.repository.TransactionEntityRepository;
 import be.yorian.budgetbuddy.dto.BudgetOverviewPerCategory;
 import be.yorian.budgetbuddy.dto.BudgetPerCategory;
 import be.yorian.budgetbuddy.dto.BudgetPerMonth;
@@ -46,7 +46,7 @@ public class BudgetServiceImpl implements BudgetService {
     }
 
     @Override
-    public List<BudgetOverviewPerCategory> getBudgetOverviewPerCategory(Long categoryId, int year) {
+    public List<BudgetOverviewPerCategory> getBudgetOverviewPerCategory(long categoryId, int year) {
         List <BudgetOverviewPerCategory> dtos = new ArrayList<>();
         List <TransactionEntity> transactionEntities;
         if (year == 0) {
@@ -263,9 +263,9 @@ public class BudgetServiceImpl implements BudgetService {
                 days.forEach(d -> txs.forEach(t -> {
                     if (d == t.getDate().getDayOfMonth()) {
                         if (incommingBudget.containsKey(d)) {
-                            incommingBudget.merge(d, t.amount, Double::sum);
+                            incommingBudget.merge(d, t.getAmount(), Double::sum);
                         } else {
-                            incommingBudget.put(d, t.amount);
+                            incommingBudget.put(d, t.getAmount());
                         }
                     } else {
                         if (!incommingBudget.containsKey(d)) {
@@ -292,7 +292,7 @@ public class BudgetServiceImpl implements BudgetService {
             if (category.isFixedcost()) {
                 days.forEach(d -> txs.forEach(t -> {
                     if (d == t.getDate().getDayOfMonth()) {
-                        double amount = t.sign.equals("+") ? t.amount : 0.0-t.amount;
+                        double amount = t.getSign().equals("+") ? t.getAmount() : 0.0-t.getAmount();
                         if (fixedCostBudget.containsKey(d)) {
                             fixedCostBudget.merge(d, -amount, Double::sum);
                         } else {
@@ -322,7 +322,7 @@ public class BudgetServiceImpl implements BudgetService {
         groupedByCategory.forEach((category, txs) -> {
             if (!category.isFixedcost() && !category.saving && !category.isRevenue()) {
                 days.forEach(d -> txs.forEach(t -> {
-                    double amount = t.sign.equals("+") ? t.amount : 0.0 - t.amount;
+                    double amount = t.getSign().equals("+") ? t.getAmount() : 0.0 - t.getAmount();
                     if (d == t.getDate().getDayOfMonth()) {
                         if (otherCostBudget.containsKey(d)) {
                             otherCostBudget.merge(d, -amount, Double::sum);

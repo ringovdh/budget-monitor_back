@@ -4,27 +4,27 @@ import java.time.LocalDate;
 
 public class Transaction {
 
-    public int id;
+    private long id;
 
-    public String number;
+    private String number;
 
-    public Double amount;
+    private Double amount;
 
-    public String sign;
+    private String sign;
 
-    public LocalDate date;
+    private LocalDate date;
 
-    public String comment;
+    private String comment;
 
-    public String originalComment;
+    private String originalComment;
 
-    public Category category;
+    private Category category;
 
-    public Project project;
+    private Project project;
 
     public Transaction() {}
 
-    public Transaction(int id, String number, Double amount, String sign, LocalDate date, String comment, Category category, Project project) {
+    public Transaction(long id, String number, Double amount, String sign, LocalDate date, String comment, Category category, Project project) {
         this.id = id;
         this.number = number;
         this.amount = amount;
@@ -35,11 +35,11 @@ public class Transaction {
         this.project = project;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

@@ -1,7 +1,7 @@
 package be.yorian.budgetbuddy.service.impl;
 
 import be.yorian.budgetbuddy.model.Category;
-import be.yorian.budgetbuddy.repository.CategoryRepository;
+import be.yorian.budgetbuddy.repository.repo.CategoryRepository;
 import be.yorian.budgetbuddy.service.CategoryService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;

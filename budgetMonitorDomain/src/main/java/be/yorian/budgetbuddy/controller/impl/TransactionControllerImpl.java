@@ -1,6 +1,5 @@
 package be.yorian.budgetbuddy.controller.impl;
 
-import be.yorian.budgetbuddy.adapter.database.entity.TransactionEntity;
 import be.yorian.budgetbuddy.controller.TransactionController;
 import be.yorian.budgetbuddy.dto.BudgetOverviewPerCategory;
 import be.yorian.budgetbuddy.dto.TransactionDTO;
@@ -39,12 +38,6 @@ public class TransactionControllerImpl implements TransactionController {
     }
 
     @Override
-    @GetMapping("/transactions")
-    public List<TransactionEntity> getTransactions() {
-        return transactionService.getTransactions();
-    }
-
-    @Override
     @GetMapping(produces = "application/json", path="transactions/category")
     public ResponseEntity<List<BudgetOverviewPerCategory>> getTransactionsByCategory(@RequestParam Optional<Long> categoryId,
                                                                     @RequestParam Optional<Integer> year) {
@@ -60,12 +53,6 @@ public class TransactionControllerImpl implements TransactionController {
         return ResponseEntity.ok().body(budgetOverviewPerCategory);
     }
 
-    @Override
-    @GetMapping("/transactions/{month}/{year}")
-    public List<TransactionEntity> getTransactionsByMonth(@PathVariable String month, @PathVariable String year) {
-        return transactionService.getTransactionsByMonth(month, year);
-    }
-
 	@Override
     @PostMapping("/transactions")
     public TransactionDTO createTransaction(@RequestBody Transaction transaction) {
@@ -74,13 +61,13 @@ public class TransactionControllerImpl implements TransactionController {
 
     @Override
     @PutMapping("/transactions/{id}")
-    public TransactionEntity updateTransaction(@PathVariable("id")Long id, @RequestBody TransactionEntity transaction) {
+    public TransactionDTO updateTransaction(@PathVariable("id")long id, @RequestBody Transaction transaction) {
         return transactionService.updateTransaction(id, transaction);
     }
 
     @Override
     @DeleteMapping("/transactions/{id}")
-    public void deleteTransaction(@PathVariable("id")Long id) {
+    public void deleteTransaction(@PathVariable("id")long id) {
         transactionService.deleteTransaction(id);
     }
 

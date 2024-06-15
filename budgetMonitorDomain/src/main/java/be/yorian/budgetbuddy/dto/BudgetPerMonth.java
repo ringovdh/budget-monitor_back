@@ -1,6 +1,6 @@
 package be.yorian.budgetbuddy.dto;
 
-import be.yorian.budgetbuddy.adapter.database.entity.TransactionEntity;
+import be.yorian.budgetbuddy.repository.adapter.entity.TransactionEntity;
 
 import java.util.List;
 

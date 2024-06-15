@@ -1,11 +1,11 @@
 package be.yorian.budgetbuddy.helper;
 
-import be.yorian.budgetbuddy.adapter.database.entity.TransactionEntity;
-import be.yorian.budgetbuddy.adapter.database.repository.TransactionEntityRepository;
+import be.yorian.budgetbuddy.repository.adapter.entity.TransactionEntity;
+import be.yorian.budgetbuddy.repository.adapter.repository.TransactionEntityRepository;
 import be.yorian.budgetbuddy.dto.TransactionsPerCategory;
 import be.yorian.budgetbuddy.model.Comment;
 import be.yorian.budgetbuddy.model.ImportTransactionsResponse;
-import be.yorian.budgetbuddy.repository.CommentRepository;
+import be.yorian.budgetbuddy.repository.repo.CommentRepository;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

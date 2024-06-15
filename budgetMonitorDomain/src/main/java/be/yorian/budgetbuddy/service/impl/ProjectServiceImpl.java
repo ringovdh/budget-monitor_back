@@ -1,11 +1,10 @@
 package be.yorian.budgetbuddy.service.impl;
 
-import be.yorian.budgetbuddy.adapter.database.entity.TransactionEntity;
-import be.yorian.budgetbuddy.adapter.database.repository.TransactionEntityRepository;
+import be.yorian.budgetbuddy.repository.adapter.entity.TransactionEntity;
+import be.yorian.budgetbuddy.repository.adapter.repository.TransactionEntityRepository;
 import be.yorian.budgetbuddy.dto.ProjectOverview;
 import be.yorian.budgetbuddy.model.Project;
-import be.yorian.budgetbuddy.model.Transaction;
-import be.yorian.budgetbuddy.repository.ProjectRepository;
+import be.yorian.budgetbuddy.repository.repo.ProjectRepository;
 import be.yorian.budgetbuddy.service.ProjectService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
