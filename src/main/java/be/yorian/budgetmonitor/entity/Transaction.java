@@ -9,7 +9,6 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Transient;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 @Entity
 public class Transaction {
@@ -39,12 +38,6 @@ public class Transaction {
     @JoinColumn(name= "project_id", referencedColumnName = "id")
     public Project project;
 
-    @Transient
-    private String[] words;
-    @Transient
-    private int length;
-    @Transient
-    private String year;
 
     public Transaction() {}
 
@@ -60,6 +53,14 @@ public class Transaction {
 
     public Transaction(String number) {
         this.number = number;
+    }
+
+    public long getTx_id() {
+        return tx_id;
+    }
+
+    public void setTx_id(long tx_id) {
+        this.tx_id = tx_id;
     }
 
     public String getNumber() {
@@ -118,80 +119,15 @@ public class Transaction {
         this.project = project;
     }
 
+    public void setOriginalComment(String originalComment) {
+        this.originalComment = originalComment;
+    }
 
     public double getAmountWithSign() {
         if (sign.equals("+")) {
             return amount;
         } else {
         return -amount;
-        }
-    }
-
-    public void setTransactionAsText(String text) {
-        this.words = text.split("\\s+");
-        this.length = words.length;
-    }
-
-    public void setYear(String year) {
-        this.year = year;
-    }
-
-    public void convertTransaction() {
-        convertSign();
-        convertDate();
-        convertAmount();
-        convertComment();
-    }
-
-    private void convertComment() {
-        if (isNegative()) {
-            for(int i = 0; i < length-3 ;i++) {
-                this.originalComment = originalComment.concat(words[i] + " ");
-            }
-        } else {
-            for(int i = 0; i < length-2 ;i++) {
-                this.originalComment = originalComment.concat(words[i] + " ");
-            }
-        }
-    }
-
-    private void convertAmount() {
-        String amount_string;
-        if (isNegative()) {
-            amount_string = words[length - 2];
-        } else {
-            amount_string = words[length - 1];
-        }
-        if (amount_string.contains(".")) {
-            amount_string = amount_string.replace(".",  "");
-        }
-        if (amount_string.contains("+")) {
-            amount_string = amount_string.replace("+",  "");;
-        }
-        amount_string = amount_string.replace(',', '.');
-
-        this.amount = Double.parseDouble(amount_string);
-    }
-
-    private void convertDate() {
-        String date;
-        if (isNegative()) {
-            date = words[length - 3];
-        } else {
-            date = words[length - 2];
-        }
-        DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-        this.date = LocalDate.parse(date.concat("-" + year), format);
-    }
-
-    private boolean isNegative() {
-        return sign.equals("-");
-    }
-    private void convertSign() {
-        if (words[length - 1].equals("-")) {
-            this.sign = "-";
-        } else {
-            this.sign = "+";
         }
     }
 
