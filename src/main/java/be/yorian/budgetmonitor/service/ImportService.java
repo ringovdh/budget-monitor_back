@@ -1,6 +1,6 @@
 package be.yorian.budgetmonitor.service;
 
-import be.yorian.budgetmonitor.entity.ImportTransactionsResponse;
+import be.yorian.budgetmonitor.dto.ImportTransactionsResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface ImportService {

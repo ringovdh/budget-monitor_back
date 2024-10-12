@@ -35,7 +35,7 @@ public class BudgetControllerImpl implements BudgetController {
     @GetMapping(produces = "application/json", path="/budgets/category")
     public ResponseEntity<List<BudgetOverviewPerCategory>> getBudgetOverviewPerCategory(@RequestParam Optional<Long>categoryId,
                                                                                         @RequestParam Optional<Integer>year) {
-        return ResponseEntity.ok().body(budgetService.getBudgetOverviewPerCategory(categoryId.orElse(0L), year.orElse(2022)));
+        return ResponseEntity.ok().body(budgetService.getBudgetOverviewPerCategory(categoryId.orElse(0L), year.orElse(0)));
     }
 
     @Override

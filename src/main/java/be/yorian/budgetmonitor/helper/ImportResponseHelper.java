@@ -2,7 +2,7 @@ package be.yorian.budgetmonitor.helper;
 
 import be.yorian.budgetmonitor.dto.TransactionsPerCategory;
 import be.yorian.budgetmonitor.entity.Comment;
-import be.yorian.budgetmonitor.entity.ImportTransactionsResponse;
+import be.yorian.budgetmonitor.dto.ImportTransactionsResponse;
 import be.yorian.budgetmonitor.entity.Transaction;
 import be.yorian.budgetmonitor.repository.CommentRepository;
 import be.yorian.budgetmonitor.repository.TransactionRepository;

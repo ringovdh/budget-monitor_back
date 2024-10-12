@@ -1,7 +1,7 @@
 package be.yorian.budgetmonitor.controller.impl;
 
 import be.yorian.budgetmonitor.controller.ImportController;
-import be.yorian.budgetmonitor.entity.ImportTransactionsResponse;
+import be.yorian.budgetmonitor.dto.ImportTransactionsResponse;
 import be.yorian.budgetmonitor.response.CustomResponse;
 import be.yorian.budgetmonitor.service.impl.ImportServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;

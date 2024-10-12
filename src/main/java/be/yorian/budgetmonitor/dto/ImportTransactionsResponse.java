@@ -1,6 +1,6 @@
-package be.yorian.budgetmonitor.entity;
+package be.yorian.budgetmonitor.dto;
 
-import be.yorian.budgetmonitor.dto.TransactionsPerCategory;
+import be.yorian.budgetmonitor.entity.Transaction;
 
 import java.util.List;
 

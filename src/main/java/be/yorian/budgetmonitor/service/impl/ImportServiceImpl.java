@@ -1,6 +1,6 @@
 package be.yorian.budgetmonitor.service.impl;
 
-import be.yorian.budgetmonitor.entity.ImportTransactionsResponse;
+import be.yorian.budgetmonitor.dto.ImportTransactionsResponse;
 import be.yorian.budgetmonitor.entity.Transaction;
 import be.yorian.budgetmonitor.helper.ImportResponseHelper;
 import be.yorian.budgetmonitor.mapper.TransactionMapper;
