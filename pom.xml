@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>be.yorian</groupId>
-    <artifactId>budget-monitor</artifactId>
+    <artifactId>budgetbuddy</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>budget-monitor_back</name>
-    <description>budget-monitor_back</description>
+    <name>budgetbuddy_back</name>
+    <description>budgetbuddy_back</description>
     <properties>
         <java.version>21</java.version>
     </properties>
