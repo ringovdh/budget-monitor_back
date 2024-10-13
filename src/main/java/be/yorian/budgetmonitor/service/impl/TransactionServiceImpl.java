@@ -5,10 +5,9 @@ import be.yorian.budgetmonitor.repository.TransactionRepository;
 import be.yorian.budgetmonitor.service.TransactionService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import static be.yorian.budgetmonitor.mapper.TransactionMapper.mapTransaction;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -22,28 +21,10 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<Transaction> getTransactions() {
-        return transactionRepository.findAll(sortByDate());
-    }
-
-    @Override
     public Transaction updateTransaction(Long id, Transaction updatedTransaction) {
-        Transaction transaction = transactionRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("transaction_not_found"));
-
-        transaction.setNumber(updatedTransaction.getNumber());
-        transaction.setDate(updatedTransaction.getDate());
-        transaction.setComment(updatedTransaction.getComment());
-        transaction.setSign(updatedTransaction.getSign());
-        transaction.setAmount(updatedTransaction.getAmount());
-        transaction.setCategory(updatedTransaction.getCategory());
-        transaction.setProject(updatedTransaction.getProject());
-
-        return transactionRepository.save(transaction);
-    }
-
-    @Override
-    public List<Transaction> getTransactionsByMonth(String month, String year) {
-        return transactionRepository.findByMonth(month, year);
+        Transaction transaction = transactionRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("transaction_not_found"));
+        return transactionRepository.save(mapTransaction(transaction, updatedTransaction));
     }
 
     @Override
@@ -54,10 +35,6 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public void deleteTransaction(Long id) {
         transactionRepository.deleteById(id);
-    }
-
-    private Sort sortByDate() {
-        return Sort.by("date").ascending();
     }
 
 }

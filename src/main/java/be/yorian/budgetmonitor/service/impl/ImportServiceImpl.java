@@ -50,7 +50,7 @@ public class ImportServiceImpl implements ImportService {
             }
             transactionDtos = transactionAdapter.convertPdfFile(convFile);
         }
-        List<Transaction> transactions = transactionDtos.stream().map(TransactionMapper::mapTransaction).toList();
+        List<Transaction> transactions = transactionDtos.stream().map(TransactionMapper::mapDtoToTransaction).toList();
         ImportResponseHelper helper = new ImportResponseHelper(transactionRepository, commentRepository, transactions);
 
         return helper.createImportResponse();
