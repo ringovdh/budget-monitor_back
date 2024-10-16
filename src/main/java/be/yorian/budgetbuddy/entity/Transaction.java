@@ -123,6 +123,10 @@ public class Transaction {
         this.originalComment = originalComment;
     }
 
+    public String getOriginalComment() {
+        return originalComment;
+    }
+
     public double getAmountWithSign() {
         if (sign.equals("+")) {
             return amount;

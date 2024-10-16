@@ -1,13 +1,12 @@
 package be.yorian.budgetbuddy.helper;
 
+import be.yorian.budgetbuddy.dto.ImportTransactionsResponse;
 import be.yorian.budgetbuddy.dto.TransactionsPerCategory;
 import be.yorian.budgetbuddy.entity.Comment;
-import be.yorian.budgetbuddy.dto.ImportTransactionsResponse;
 import be.yorian.budgetbuddy.entity.Transaction;
 import be.yorian.budgetbuddy.repository.CommentRepository;
 import be.yorian.budgetbuddy.repository.TransactionRepository;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -18,9 +17,11 @@ public class ImportResponseHelper {
 
     private final TransactionRepository transactionRepository;
     private final CommentRepository commentRepository;
-    private List<Comment> comments = new ArrayList<>();
+    private final List<Comment> comments = new ArrayList<>();
     private final List<Transaction> transactions;
     private final ImportTransactionsResponse response;
+    private final List<Transaction> newTransactions = new ArrayList<>();
+    private final List<Transaction> existingTransactions = new ArrayList<>();
 
     public ImportResponseHelper(TransactionRepository transactionRepository,
                                 CommentRepository commentRepository,
@@ -37,62 +38,51 @@ public class ImportResponseHelper {
         loadAllComments();
         filterNewTransactions();
 
-        return this.response;
+        return response;
     }
 
     private void loadAllComments() {
-        comments = commentRepository.findAll();
+        comments.addAll(commentRepository.findAll());
     }
 
     private void filterNewTransactions() {
+        transactions.forEach(tx -> {
+            transactionRepository.findByDateAndNumber(tx.getDate(), tx.getNumber())
+                    .ifPresentOrElse(
+                            existingTransactions::add,
+                            () -> handleNewTransaction(tx)
+                    );
+        });
 
-        List<Transaction> newTransactions = new ArrayList<>();
-        List<Transaction> existingTransactions = new ArrayList<>();
-
-        for (Transaction tx : transactions) {
-            Transaction existingTransaction = checkTransaction(tx.getDate(), tx.getNumber());
-            if (null == existingTransaction) {
-                prepareTransaction(tx);
-                newTransactions.add(tx);
-            } else {
-                existingTransactions.add(existingTransaction);
-            }
-        }
         newTransactions.sort(Comparator.comparing(Transaction::getDate));
 
         this.response.setExistingTransactions(createBudgetOverview(existingTransactions));
         this.response.setNewTransactions(newTransactions);
     }
 
+    private void handleNewTransaction(Transaction transaction) {
+        setPredefinedCommentAndCategory(transaction);
+        newTransactions.add(transaction);
+    }
+
     private List<TransactionsPerCategory> createBudgetOverview(List<Transaction> existingTransactions) {
         List<TransactionsPerCategory> budgetOverview = new ArrayList<>();
         existingTransactions.stream()
                 .collect(groupingBy(Transaction::getCategory))
-                .forEach((category, transactions) -> {
-                    TransactionsPerCategory dto = new TransactionsPerCategory();
-                    dto.setCategory(category);
-                    dto.setTransactions(transactions);
-                    dto.calculateAndSetTotal(transactions);
-                    budgetOverview.add(dto);
-                });
+                .forEach((category, transactions) ->
+                    budgetOverview.add(new TransactionsPerCategory(category, transactions))
+                );
 
         return budgetOverview;
     }
 
-    private Transaction checkTransaction(LocalDate date, String number) {
-        return transactionRepository.findByDateAndNumber(date, number);
-    }
-
-    private void prepareTransaction(Transaction tx) {
-
-        String originalComment_lower = tx.originalComment.toLowerCase();
-
-        for (Comment cmt : comments) {
-            if (originalComment_lower.contains(cmt.getSearchterm())) {
-                tx.setComment(cmt.getReplacement());
-                tx.setCategory(cmt.getCategory());
+    private void setPredefinedCommentAndCategory(Transaction tx) {
+        comments.forEach(comment -> {
+            if (tx.originalComment.toLowerCase().contains(comment.getSearchterm())) {
+                tx.setComment(comment.getReplacement());
+                tx.setCategory(comment.getCategory());
             }
-        }
+        });
     }
 
 }
