@@ -7,37 +7,31 @@ import java.util.List;
 
 public class TransactionsPerCategory {
 
-    private Category category;
-    private List<Transaction> transactions;
-    private double total;
+    private final Category category;
+    private final List<Transaction> transactions;
+    private final double total;
+
+    public TransactionsPerCategory(Category category, List<Transaction> transactions) {
+        this.category = category;
+        this.transactions = transactions;
+        this.total = calculateAndSetTotal();
+    }
 
     public Category getCategory() {
         return category;
-    }
-
-    public void setCategory(Category category) {
-        this.category = category;
     }
 
     public List<Transaction> getTransactions() {
         return transactions;
     }
 
-    public void setTransactions(List<Transaction> transactions) {
-        this.transactions = transactions;
-    }
-
     public double getTotal() {
         return total;
     }
 
-    public void setTotal(double total) {
-        this.total = total;
-    }
-
-    public void calculateAndSetTotal(List<Transaction> transactions) {
-        setTotal(transactions.stream()
+    private double calculateAndSetTotal() {
+        return transactions.stream()
                 .mapToDouble(Transaction::getAmountWithSign)
-                .sum());
+                .sum();
     }
 }

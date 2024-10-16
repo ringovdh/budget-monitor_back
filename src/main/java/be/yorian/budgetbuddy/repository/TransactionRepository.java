@@ -7,11 +7,12 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction,Long> {
 
-    Transaction findByDateAndNumber(LocalDate date, String number);
+    Optional<Transaction> findByDateAndNumber(LocalDate date, String number);
 
     @Query("""
             select t from Transaction t
